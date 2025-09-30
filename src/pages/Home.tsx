@@ -101,14 +101,7 @@ export default function Home() {
         </Typography>
         <List sx={{ listStyleType: 'disc', pl: 4 }}>
           <ListItem sx={{ display: 'list-item' }}>
-            <ListItemText
-              primary={
-                <Link href="https://www.sante.bj/sites/default/files/2021-01/Guide%20du%20formateur%20en%20m%C3%A9thodologie%20de%20la%20recherche%20en%20sant%C3%A9.pdf" target="_blank" rel="noopener">
-                  Guide du formateur en méthodologie de la recherche en santé – Ministère de la Santé (Bénin, 2016)
-                </Link>
-              }
-            />
-          </ListItem>
+          
           <ListItem sx={{ display: 'list-item' }}>
             <ListItemText
               primary="Guide de formation aux méthodes de la recherche scientifique – Documents pédagogiques universitaires francophones"
