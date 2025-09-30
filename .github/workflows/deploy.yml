@@ -1,0 +1,39 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]   # Déclenchement à chaque push sur la branche main
+
+permissions:
+  contents: write        # Nécessaire pour publier sur gh-pages
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Récupération du code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Étape 2 : Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      # Étape 3 : Installation des dépendances
+      - name: Install dependencies
+        run: npm ci
+
+      # Étape 4 : Build du site
+      - name: Build project
+        run: npm run build
+
+      # Étape 5 : Déploiement sur GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
