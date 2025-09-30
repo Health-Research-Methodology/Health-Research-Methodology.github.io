@@ -1,18 +1,40 @@
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import { CheckCircleOutline } from "@mui/icons-material";
+
 export default function EthicsResearch() {
   return (
-    <section className="max-w-5xl mx-auto leading-relaxed">
-      <h1 className="text-3xl font-bold mb-6">Considérations éthiques</h1>
-      <p className="mb-4">
-        L’éthique est au cœur de la recherche en santé. Elle protège les participants,
-        garantit la confidentialité et assure que les bénéfices l’emportent sur les risques.
-      </p>
-      <ul className="list-disc pl-6 space-y-2">
-        <li>Consentement libre et éclairé</li>
-        <li>Confidentialité et anonymisation des données</li>
-        <li>Droit de retrait sans conséquence</li>
-        <li>Équilibre bénéfice/risque</li>
-        <li>Validation par un comité d’éthique</li>
-      </ul>
-    </section>
+    <Box component="section" sx={{ maxWidth: "max-content", mx: "auto", p: 2 }}>
+      <Typography variant="h1" sx={{ mb: 4 }}>
+        Considérations éthiques
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 2 }}>
+        L’éthique est au cœur de la recherche en santé. Elle protège les
+        participants, garantit la confidentialité et assure que les bénéfices
+        l’emportent sur les risques.
+      </Typography>
+      <List>
+        {[
+          "Consentement libre et éclairé",
+          "Confidentialité et anonymisation des données",
+          "Droit de retrait sans conséquence",
+          "Équilibre bénéfice/risque",
+          "Validation par un comité d’éthique",
+        ].map((text) => (
+          <ListItem key={text} disableGutters>
+            <ListItemIcon sx={{ minWidth: 32 }}>
+              <CheckCircleOutline color="primary" />
+            </ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
 }

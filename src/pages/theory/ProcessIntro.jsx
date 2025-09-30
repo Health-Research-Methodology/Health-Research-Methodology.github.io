@@ -1,19 +1,40 @@
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import { ArrowForward } from "@mui/icons-material";
+
 export default function ProcessIntro() {
   return (
-    <section className="max-w-5xl mx-auto leading-relaxed">
-      <h1 className="text-3xl font-bold mb-6">Introduction au processus de recherche</h1>
-      <p className="mb-4">
-        Le processus de recherche scientifique suit une suite logique d’étapes permettant
-        de passer d’une idée à une conclusion validée. En santé, il s’organise autour de
-        cinq grandes phases.
-      </p>
-      <ol className="list-decimal pl-6 space-y-2">
-        <li>Phase conceptuelle : identification du problème et formulation des hypothèses</li>
-        <li>Phase méthodologique : élaboration du protocole</li>
-        <li>Phase empirique : collecte des données</li>
-        <li>Phase analytique : traitement et interprétation</li>
-        <li>Phase de diffusion : communication des résultats</li>
-      </ol>
-    </section>
+    <Box component="section" sx={{ maxWidth: "max-content", mx: "auto", p: 2 }}>
+      <Typography variant="h1" sx={{ mb: 4 }}>
+        Introduction au processus de recherche
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 2 }}>
+        Le processus de recherche scientifique suit une suite logique d’étapes
+        permettant de passer d’une idée à une conclusion validée. En santé, il
+        s’organise autour de cinq grandes phases.
+      </Typography>
+      <List>
+        {[
+          "Phase conceptuelle : identification du problème et formulation des hypothèses",
+          "Phase méthodologique : élaboration du protocole",
+          "Phase empirique : collecte des données",
+          "Phase analytique : traitement et interprétation",
+          "Phase de diffusion : communication des résultats",
+        ].map((text) => (
+          <ListItem key={text} disableGutters>
+            <ListItemIcon sx={{ minWidth: 32 }}>
+              <ArrowForward color="secondary" />
+            </ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
 }

@@ -90,55 +90,56 @@ export default function Home() {
           </ListItem>
         </List>
       </Box>
+
+      {/* Section 3 : Ressources */}
       <Box component="section" sx={{ mt: 6 }}>
         <Typography variant="h4" component="h2" gutterBottom sx={{ borderBottom: 1, borderColor: 'divider', pb: 1 }}>
           📚 Ressources utilisées
         </Typography>
-        <Typography paragraph></Typography>
+        <Typography paragraph>
           Les ressources suivantes ont servi de base à l’élaboration de ce site :
         </Typography>
-        <List sx={{ listStyleType: 'disc', pl: 4 }}></List>
+        <List sx={{ listStyleType: 'disc', pl: 4 }}>
           <ListItem sx={{ display: 'list-item' }}>
-        <ListItemText
-          primary={
-            <Link href="https://www.sante.bj/sites/default/files/2021-01/Guide%20du%20formateur%20en%20m%C3%A9thodologie%20de%20la%20recherche%20en%20sant%C3%A9.pdf" target="_blank" rel="noopener"></Link>
-          Guide du formateur en méthodologie de la recherche en santé – Ministère de la Santé (Bénin, 2016)
-            </Link>
-          }
-        />
+            <ListItemText
+              primary={
+                <Link href="https://www.sante.bj/sites/default/files/2021-01/Guide%20du%20formateur%20en%20m%C3%A9thodologie%20de%20la%20recherche%20en%20sant%C3%A9.pdf" target="_blank" rel="noopener">
+                  Guide du formateur en méthodologie de la recherche en santé – Ministère de la Santé (Bénin, 2016)
+                </Link>
+              }
+            />
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
-        <ListItemText
-          primary="Guide de formation aux méthodes de la recherche scientifique – Documents pédagogiques universitaires francophones"
-        />
+            <ListItemText
+              primary="Guide de formation aux méthodes de la recherche scientifique – Documents pédagogiques universitaires francophones"
+            />
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
-        <ListItemText
-          primary={
-            <Link href="https://apps.who.int/iris/handle/10665/44162" target="_blank" rel="noopener">
-          Scientific Publications Booklet – Rédaction et diffusion des publications scientifiques (OMS, 2009)
-            </Link>
-          }
-        />
+            <ListItemText
+              primary={
+                <Link href="https://apps.who.int/iris/handle/10665/44162" target="_blank" rel="noopener">
+                  Scientific Publications Booklet – Rédaction et diffusion des publications scientifiques (OMS, 2009)
+                </Link>
+              }
+            />
+          </ListItem>
+           <ListItem sx={{ display: 'list-item' }}>
+            <ListItemText
+              primary="Introduction à la recherche – Supports de cours en méthodologie et épistémologie"
+            />
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
-        <ListItemText
-          primary="Introduction à la recherche – Supports de cours en méthodologie et épistémologie"
-        />
+            <ListItemText
+              primary="Mesures statistiques en épidémiologie – Bernard P.-M. & Lapointe C."
+            />
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
-        <ListItemText
-          primary="Mesures statistiques en épidémiologie – Bernard P.-M. & Lapointe C."
-        />
-          </ListItem>
-          <ListItem sx={{ display: 'list-item' }}>
-        <ListItemText
-          primary="La Biostatistique – Preprint – Concepts de base en statistique appliquée à la santé"
-        />
+            <ListItemText
+              primary="La Biostatistique – Preprint – Concepts de base en statistique appliquée à la santé"
+            />
           </ListItem>
         </List>
-      </Box></ListItem></Link>
-        
+      </Box>
     </Container>
   );
 }

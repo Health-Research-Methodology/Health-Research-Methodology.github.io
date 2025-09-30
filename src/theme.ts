@@ -1,107 +1,67 @@
-import { createTheme } from '@mui/material/styles';
+import { ThemeOptions } from '@mui/material/styles';
 
-// Create a theme instance.
-const theme = createTheme({
+// Thème clair accessible
+export const lightTheme: ThemeOptions = {
   palette: {
-    mode: 'light', // Default to light mode
+    mode: 'light',
     primary: {
-      main: '#1976d2', // A strong blue for good contrast
+      main: '#0D47A1', // Bleu foncé pour un contraste élevé
     },
     secondary: {
-      main: '#dc004e', // A strong pink for secondary actions
+      main: '#C62828', // Rouge foncé
     },
     background: {
-      default: '#f4f6f8',
+      default: '#f7f9fc',
       paper: '#ffffff',
     },
     text: {
       primary: '#212121',
-      secondary: '#424242',
-    },
+      secondary: '#5f6368',
+    }
   },
   typography: {
-    fontFamily: 'Roboto, "Helvetica", "Arial", sans-serif',
-    h1: {
-      fontSize: '2.5rem',
-      fontWeight: 500,
-    },
-    h2: {
-      fontSize: '2rem',
-      fontWeight: 500,
-    },
-    // Use rem units for scalability
-    htmlFontSize: 16,
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h1: { fontSize: '2.2rem', fontWeight: 700 },
+    h2: { fontSize: '1.8rem', fontWeight: 700 },
+    h3: { fontSize: '1.5rem', fontWeight: 700 },
   },
   components: {
-    MuiLink: {
-      styleOverrides: {
-        root: {
-          '&:focus-visible': {
-            outline: '2px solid #1976d2',
-            outlineOffset: '2px',
-            borderRadius: '2px',
-          },
-        },
-      },
-    },
     MuiButton: {
       styleOverrides: {
         root: {
-          '&:focus-visible': {
-            outline: '2px solid #1976d2',
-            outlineOffset: '2px',
-          },
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
         },
       },
     },
   },
-});
+};
 
-export const darkTheme = createTheme({
+// Thème sombre accessible
+export const darkTheme: ThemeOptions = {
   palette: {
     mode: 'dark',
     primary: {
-      main: '#90caf9',
+      main: '#64B5F6', // Bleu clair pour le mode sombre
     },
     secondary: {
-      main: '#f48fb1',
+      main: '#E57373', // Rouge clair
     },
     background: {
       default: '#121212',
       paper: '#1e1e1e',
     },
     text: {
-      primary: '#ffffff',
-      secondary: '#e0e0e0',
-    },
+      primary: '#e1e3e6',
+      secondary: '#9aa0a6',
+    }
   },
-  typography: {
-    fontFamily: 'Roboto, "Helvetica", "Arial", sans-serif',
-    htmlFontSize: 16,
-  },
-  components: {
-    MuiLink: {
-      styleOverrides: {
-        root: {
-          '&:focus-visible': {
-            outline: '2px solid #90caf9',
-            outlineOffset: '2px',
-            borderRadius: '2px',
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          '&:focus-visible': {
-            outline: '2px solid #90caf9',
-            outlineOffset: '2px',
-          },
-        },
-      },
-    },
-  },
-});
-
-export default theme;
+  typography: lightTheme.typography, // Utilise la même typographie
+  components: lightTheme.components, // Utilise les mêmes surcharges de composants
+};

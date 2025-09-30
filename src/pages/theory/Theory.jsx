@@ -1,4 +1,11 @@
 import { NavLink } from "react-router-dom";
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  Link as MuiLink,
+} from "@mui/material";
 
 const theoryLinks = [
   { path: "/overview-research", label: "Aperçu de la recherche scientifique" },
@@ -11,29 +18,34 @@ const theoryLinks = [
 
 export default function Theory() {
   return (
-    <section className="max-w-5xl mx-auto leading-relaxed">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+    <Box component="section" sx={{ maxWidth: "max-content", mx: "auto", p: 2 }}>
+      <Typography variant="h1" sx={{ mb: 4 }}>
         Ressources théoriques
-      </h1>
+      </Typography>
 
-      <p className="mb-4">
-        Cette section regroupe les concepts de base nécessaires pour comprendre et
-        pratiquer la recherche scientifique en santé. Vous pouvez parcourir chaque
-        thème séparément.
-      </p>
+      <Typography variant="body1" sx={{ mb: 4 }}>
+        Cette section regroupe les concepts de base nécessaires pour comprendre
+        et pratiquer la recherche scientifique en santé. Vous pouvez parcourir
+        chaque thème séparément.
+      </Typography>
 
-      <ul className="list-disc pl-6 space-y-3">
+      <List>
         {theoryLinks.map((item) => (
-          <li key={item.path}>
-            <NavLink
+          <ListItem key={item.path} disablePadding>
+            <MuiLink
+              component={NavLink}
               to={item.path}
-              className="text-blue-700 dark:text-blue-300 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
+              sx={{
+                color: "primary.main",
+                textDecoration: "none",
+                "&:hover": { textDecoration: "underline" },
+              }}
             >
               {item.label}
-            </NavLink>
-          </li>
+            </MuiLink>
+          </ListItem>
         ))}
-      </ul>
-    </section>
+      </List>
+    </Box>
   );
 }

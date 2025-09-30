@@ -30,7 +30,7 @@ export default function App() {
     <>
       <SkipLink />
       <NavBar />
-      <Container component="main" sx={{ mt: 4, mb: 4 }}>
+      <Container component="main" id="main" sx={{ mt: 4, mb: 4 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/introduction" element={<Introduction />} />

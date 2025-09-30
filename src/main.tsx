@@ -1,9 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import theme from './theme';
-import App from "./App.jsx";
+import { CssBaseline } from '@mui/material';
+import { AppThemeProvider } from './context/ThemeContext';
+import App from "./App";
 import "./index.css";
 
 
@@ -12,12 +12,12 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <ThemeProvider theme={theme}>
+      <AppThemeProvider>
         <CssBaseline />
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </ThemeProvider>
+      </AppThemeProvider>
     </React.StrictMode>
   );
 }
