@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: "/", // Use root path for local dev
+  base: "/Health-Research-Methodology-guide/", // Repository name
+
   server: {
     port: 3000,
   },
