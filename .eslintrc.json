@@ -1,0 +1,12 @@
+{
+"env": { "browser": true, "es2022": true },
+"extends": ["eslint:recommended"],
+"parserOptions": { "ecmaVersion": 2022, "sourceType": "module" },
+"plugins": ["jsx-a11y"],
+"rules": {
+"jsx-a11y/alt-text": "warn",
+"jsx-a11y/anchor-is-valid": "warn",
+"jsx-a11y/no-static-element-interactions": "off",
+"jsx-a11y/click-events-have-key-events": "warn"
+}
+}

@@ -1,0 +1,11 @@
+/* Lien d'évitement (skip link) visible au focus */
+.skip-link {
+position: absolute;
+left: -9999px;
+top: 0;
+background: #111;
+color: #fff;
+padding: 0.5rem 0.75rem;
+z-index: 1000;
+}
+.skip-link:focus { left: 0.5rem; top: 0.5rem; }
