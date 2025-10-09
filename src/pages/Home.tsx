@@ -78,13 +78,13 @@ export default function Home() {
         <List component="ol" sx={{ listStyleType: 'decimal', pl: 4 }}>
           <ListItem sx={{ display: 'list-item' }}>
             <ListItemText 
-              primary={<Link component={NavLink} to="/brainstorm">Brainstorming d'idées de recherche</Link>}
+              primary={<Link component={NavLink} to="/conceptuelle">Brainstorming d'idées de recherche</Link>}
               secondary="Identifier un problème de santé pertinent" 
             />
           </ListItem>
           <ListItem sx={{ display: 'list-item' }}>
             <ListItemText 
-              primary={<Link component={NavLink} to="/variables">Identification des variables clés et du design</Link>}
+              primary={<Link component={NavLink} to="/conceptuelle">Identification des variables clés et du design</Link>}
               secondary="Choisir une méthode adaptée (observationnel, expérimental…)" 
             />
           </ListItem>
@@ -100,8 +100,6 @@ export default function Home() {
           Les ressources suivantes ont servi de base à l’élaboration de ce site :
         </Typography>
         <List sx={{ listStyleType: 'disc', pl: 4 }}>
-          <ListItem sx={{ display: 'list-item' }}>
-          
           <ListItem sx={{ display: 'list-item' }}>
             <ListItemText
               primary="Guide de formation aux méthodes de la recherche scientifique – Documents pédagogiques universitaires francophones"

@@ -14,6 +14,7 @@ const theoryLinks = [
   { path: "/ethics-research", label: "Considérations éthiques" },
   { path: "/process-intro", label: "Introduction au processus de recherche" },
   { path: "/writing-overview", label: "Aperçu de la rédaction d’une étude" },
+  { path: "/fonctions-research", label: "Fonctions et niveaux de recherche" },
 ];
 
 export default function Theory() {

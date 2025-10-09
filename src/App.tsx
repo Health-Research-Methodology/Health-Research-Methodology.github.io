@@ -12,9 +12,19 @@ import PhilosophyResearch from "./pages/theory/PhilosophyResearch";
 import EthicsResearch from "./pages/theory/EthicsResearch";
 import ProcessIntro from "./pages/theory/ProcessIntro";
 import WritingOverview from "./pages/theory/WritingOverview";
+import FonctionsResearch from "./pages/theory/FonctionsResearch";
 
 import Conceptuelle from "./pages/phases/conceptuelle/Conceptuelle";
+import BrainstormIdeas from "./pages/phases/conceptuelle/Step1BrainstormIdeas";
+import Step2FormulateProblem from "./pages/phases/conceptuelle/Step2FormulateProblem";
+import Step3LitteratureReview from "./pages/phases/conceptuelle/step3LitteratureReview";
+import Step4VariablesDesign from "./pages/phases/conceptuelle/Step4VariablesDesign";
+import Step5HypothsisModelConceptuel from "./pages/phases/conceptuelle/Step5HypothsisModelConceptuel";
+import Step6Synthisis from "./pages/phases/conceptuelle/Step6-synthisis";
+
+
 import Methodologique from "./pages/phases/methodologique/Methodologique";
+import Step7TypeEtude from "./pages/phases/methodologique/step7TypeEtude";
 import Empirique from "./pages/phases/empirique/Empirique";
 import Analytique from "./pages/phases/analytique/Analytique";
 import Diffusion from "./pages/diffusion/Diffusion";
@@ -42,8 +52,19 @@ export default function App() {
           <Route path="/ethics-research" element={<EthicsResearch />} />
           <Route path="/process-intro" element={<ProcessIntro />} />
           <Route path="/writing-overview" element={<WritingOverview />} />
+          <Route path="/fonctions-research" element={<FonctionsResearch />} />
           <Route path="/conceptuelle" element={<Conceptuelle />} />
+
+       
+<Route path="/conceptuelle/brainstorm" element={<BrainstormIdeas />} />
+<Route path="/conceptuelle/formulate-problem" element={<Step2FormulateProblem />} />
+<Route path="/conceptuelle/literature-review" element={<Step3LitteratureReview />} />
+<Route path="/conceptuelle/variables-design" element={<Step4VariablesDesign />} />
+<Route path="/conceptuelle/hypotheses-model" element={<Step5HypothsisModelConceptuel />} />
+<Route path="/conceptuelle/synthisis" element={<Step6Synthisis />} />
+
           <Route path="/methodologique" element={<Methodologique />} />
+          <Route path="/methodologique/type-etude" element={<Step7TypeEtude />} />
           <Route path="/empirique" element={<Empirique />} />
           <Route path="/analytique" element={<Analytique />} />
           <Route path="/diffusion" element={<Diffusion />} />
