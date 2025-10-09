@@ -17,7 +17,7 @@ import FonctionsResearch from "./pages/theory/FonctionsResearch";
 import Conceptuelle from "./pages/phases/conceptuelle/Conceptuelle";
 import BrainstormIdeas from "./pages/phases/conceptuelle/Step1BrainstormIdeas";
 import Step2FormulateProblem from "./pages/phases/conceptuelle/Step2FormulateProblem";
-import Step3LitteratureReview from "./pages/phases/conceptuelle/step3LitteratureReview";
+import Step3LitteratureReview from "./pages/phases/conceptuelle/Step3LitteratureReview";
 import Step4VariablesDesign from "./pages/phases/conceptuelle/Step4VariablesDesign";
 import Step5HypothsisModelConceptuel from "./pages/phases/conceptuelle/Step5HypothsisModelConceptuel";
 
