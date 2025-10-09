@@ -20,7 +20,6 @@ import Step2FormulateProblem from "./pages/phases/conceptuelle/Step2FormulatePro
 import Step3LitteratureReview from "./pages/phases/conceptuelle/step3LitteratureReview";
 import Step4VariablesDesign from "./pages/phases/conceptuelle/Step4VariablesDesign";
 import Step5HypothsisModelConceptuel from "./pages/phases/conceptuelle/Step5HypothsisModelConceptuel";
-import InterestingHealthVariables from "./pages/phases/conceptuelle/InterestingHealthVariables";
 
 
 import Methodologique from "./pages/phases/methodologique/Methodologique";
