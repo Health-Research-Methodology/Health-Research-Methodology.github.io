@@ -29,7 +29,6 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel,
   Slider,
   Select,
   MenuItem,
@@ -38,24 +37,61 @@ import {
 import { 
   ArrowForward, 
   Groups, 
-  Calculate, 
-  Science,
-  Assignment,
-  CheckCircle,
-  Cancel,
-  Quiz,
-  Psychology,
-  Functions,
-  People,
-  Timeline
+  Calculate,
+  CheckCircle
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
+
+// Composant pour afficher une formule mathématique dans une boîte stylée
+const FormulaBox = ({ formula, color = 'primary.main', size = 'large' }) => {
+  const fontSize = size === 'large' ? '1.5rem' : size === 'medium' ? '1.2rem' : '1rem';
+  
+  return (
+    <Box sx={{ 
+      textAlign: 'center', 
+      py: 2, 
+      backgroundColor: 'white', 
+      borderRadius: 1, 
+      border: '2px solid', 
+      borderColor: color, 
+      mb: 2,
+      '& .katex': {
+        fontSize: fontSize
+      }
+    }}>
+      <BlockMath math={formula} />
+    </Box>
+  );
+};
+
+// Composant pour les formules plus petites (ajustements)
+const SmallFormulaBox = ({ formula }) => {
+  return (
+    <Box sx={{ 
+      textAlign: 'center', 
+      py: 1, 
+      backgroundColor: 'grey.100', 
+      borderRadius: 1, 
+      border: '1px solid', 
+      borderColor: 'grey.300',
+      '& .katex': {
+        fontSize: '1rem'
+      }
+    }}>
+      <BlockMath math={formula} />
+    </Box>
+  );
+};
 
 export default function Step8PopulationEchantillon() {
   const [showExercise1Answers, setShowExercise1Answers] = useState(false);
   const [showExercise2Answers, setShowExercise2Answers] = useState(false);
   const [showExercise3Answers, setShowExercise3Answers] = useState(false);
-  
+  const [showExercise4Answers, setShowExercise4Answers] = useState(false);
+  const [showExercise5Answers, setShowExercise5Answers] = useState(false);
+
   // État pour l'exercice 1 - Plan d'échantillonnage
   const [exercise1Answers, setExercise1Answers] = useState({
     cas1: '',
@@ -63,7 +99,7 @@ export default function Step8PopulationEchantillon() {
     cas3: ''
   });
 
-  // État pour l'exercice 2 - Calculs
+  // État pour l'exercice 2 - Calculs de tailles
   const [exercise2Inputs, setExercise2Inputs] = useState({
     prevalence_d: 0.05,
     prevalence_N: 1500,
@@ -79,12 +115,20 @@ export default function Step8PopulationEchantillon() {
     nPerGroup: 0
   });
 
-  // État pour l'exercice 3 - Type de population
+  // État exercice 3 - Type de population
   const [exercise3Answers, setExercise3Answers] = useState({
     audit: '',
     cohorte: '',
     mortalite: ''
   });
+
+  // Exercice 4 — systématique (k)
+  const [sysInputs, setSysInputs] = useState({ N: 1200, n: 120, start: 7 });
+  const [sysResult, setSysResult] = useState({ k: 10, sample: [] });
+
+  // Exercice 5 — DEFF en grappes
+  const [deffInputs, setDeffInputs] = useState({ n0: 384, m: 20, icc: 0.02, response: 85 });
+  const [deffResult, setDeffResult] = useState({ deff: 1.38, nFinal: 624 });
 
   const exercise1Cases = [
     {
@@ -95,7 +139,7 @@ export default function Step8PopulationEchantillon() {
     },
     {
       id: 'cas2',
-      case: 'Efficacité d\'une formation dans 1 service',
+      case: "Efficacité d'une formation dans 1 service",
       correctAnswer: 'Aléatoire simple (si liste)',
       options: ['Aléatoire simple (si liste)', 'Stratifié', 'En grappes', 'Par quotas']
     },
@@ -116,103 +160,89 @@ export default function Step8PopulationEchantillon() {
     },
     {
       id: 'cohorte',
-      case: 'Suivi 12 mois d\'une cohorte',
+      case: "Suivi 12 mois d'une cohorte",
       correctAnswer: 'Dynamique fermée',
       options: ['Statique/transversal', 'Dynamique fermée', 'Dynamique ouverte']
     },
     {
       id: 'mortalite',
-      case: 'Mortalité annuelle d\'une ville',
+      case: 'Mortalité annuelle d’une ville',
       correctAnswer: 'Dynamique ouverte',
       options: ['Statique/transversal', 'Dynamique fermée', 'Dynamique ouverte']
     }
   ];
 
   const handleExercise1Change = (casId, value) => {
-    setExercise1Answers(prev => ({
-      ...prev,
-      [casId]: value
-    }));
+    setExercise1Answers(prev => ({ ...prev, [casId]: value }));
   };
 
   const handleExercise3Change = (casId, value) => {
-    setExercise3Answers(prev => ({
-      ...prev,
-      [casId]: value
-    }));
+    setExercise3Answers(prev => ({ ...prev, [casId]: value }));
   };
 
   const calculateSampleSizes = () => {
     const { prevalence_d, prevalence_N, nonResponse, prop1, prop2, power } = exercise2Inputs;
-    
-    // Calcul 1: Prévalence (p=0.5, d=5%)
-    const Z = 1.96;
-    const p = 0.5;
+    const Z = 1.96; // 95%
+    const p = 0.5;  // pire cas
     const d = prevalence_d;
+
+    // Prévalence
     const nBase = Math.ceil((Z * Z * p * (1 - p)) / (d * d));
-    
-    // Correction population finie
-    const nCorr = Math.ceil(nBase / (1 + (nBase - 1) / prevalence_N));
-    
-    // Ajustement non-réponse
-    const nFinal = Math.ceil(nCorr / (1 - nonResponse / 100));
-    
-    // Calcul 2: Deux proportions
-    const p1 = prop1 / 100;
-    const p2 = prop2 / 100;
+    const nCorr = Math.ceil(nBase / (1 + (nBase - 1) / Math.max(1, prevalence_N)));
+    const nFinal = Math.ceil(nCorr / (1 - Math.min(99, Math.max(0, nonResponse)) / 100));
+
+    // Deux proportions
+    const p1 = Math.min(0.99, Math.max(0.01, prop1 / 100));
+    const p2 = Math.min(0.99, Math.max(0.01, prop2 / 100));
     const pBar = (p1 + p2) / 2;
-    const Zbeta = power === 80 ? 0.84 : 1.28;
-    
-    const numerator = Math.pow(Z * Math.sqrt(2 * pBar * (1 - pBar)) + Zbeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2);
-    const denominator = Math.pow(p1 - p2, 2);
-    const nPerGroup = Math.ceil(numerator / denominator);
-    
-    setExercise2Results({
-      nBase,
-      nCorr,
-      nFinal,
-      nPerGroup
-    });
+    const Zbeta = power === 90 ? 1.28 : 0.84;
+    const num = Math.pow(Z * Math.sqrt(2 * pBar * (1 - pBar)) + Zbeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2);
+    const den = Math.pow(p1 - p2, 2) || 1e-9;
+    const nPerGroup = Math.ceil(num / den);
+
+    setExercise2Results({ nBase, nCorr, nFinal, nPerGroup });
   };
 
   const checkExercise1Score = () => {
     let score = 0;
-    exercise1Cases.forEach(c => {
-      if (exercise1Answers[c.id] === c.correctAnswer) {
-        score += 1;
-      }
-    });
+    exercise1Cases.forEach(c => { if (exercise1Answers[c.id] === c.correctAnswer) score += 1; });
     return score;
   };
 
   const checkExercise3Score = () => {
     let score = 0;
-    exercise3Cases.forEach(c => {
-      if (exercise3Answers[c.id] === c.correctAnswer) {
-        score += 1;
-      }
-    });
+    exercise3Cases.forEach(c => { if (exercise3Answers[c.id] === c.correctAnswer) score += 1; });
     return score;
   };
 
-  const resetExercise1 = () => {
-    setExercise1Answers({
-      cas1: '',
-      cas2: '',
-      cas3: ''
-    });
+  const resetExercise1 = () => setExercise1Answers({ cas1: '', cas2: '', cas3: '' });
+  const resetExercise3 = () => setExercise3Answers({ audit: '', cohorte: '', mortalite: '' });
+
+  // Calcul Exercice 4 — systématique
+  const calcSystematic = () => {
+    const N = Math.max(1, parseInt(sysInputs.N) || 1);
+    const n = Math.max(1, parseInt(sysInputs.n) || 1);
+    const start = Math.max(1, Math.min(N, parseInt(sysInputs.start) || 1));
+    const k = Math.max(1, Math.floor(N / n));
+    const sample = [];
+    for (let val = start; val <= N; val += k) sample.push(val);
+    setSysResult({ k, sample: sample.slice(0, n) });
   };
 
-  const resetExercise3 = () => {
-    setExercise3Answers({
-      audit: '',
-      cohorte: '',
-      mortalite: ''
-    });
+  // Calcul Exercice 5 — DEFF
+  const calcDeff = () => {
+    const n0 = Math.max(1, parseInt(deffInputs.n0) || 1);
+    const m = Math.max(1, parseInt(deffInputs.m) || 1);
+    const icc = Math.max(0, Math.min(1, parseFloat(deffInputs.icc) || 0));
+    const response = Math.max(1, Math.min(100, parseInt(deffInputs.response) || 85));
+    const deff = +(1 + (m - 1) * icc).toFixed(2);
+    const nDesign = Math.ceil(n0 * deff);
+    const nFinal = Math.ceil(nDesign / (response / 100));
+    setDeffResult({ deff, nFinal });
   };
 
   return (
-    <Box component="section" sx={{ maxWidth: "1000px", mx: "auto", p: 3 }}>
+    <Box component="section" sx={{ maxWidth: "800px", mx: "auto", p: 3 }}>
       <Typography variant="h4" component="h1" sx={{ mb: 1, fontWeight: "bold" }}>
         Phase méthodologique — Étape 8
       </Typography>
@@ -223,59 +253,46 @@ export default function Step8PopulationEchantillon() {
       <Alert severity="info" icon={<Groups />} sx={{ my: 3 }}>
         <AlertTitle>🎯 Objectif de l'étape</AlertTitle>
         <Typography paragraph>
-          Définir <strong>qui sera étudié</strong> (population/cadre d'étude), <strong>comment les participants seront sélectionnés</strong> (plan d'échantillonnage) et <strong>combien en inclure</strong> (calcul de la taille d'échantillon) pour garantir des résultats valides, reproductibles et généralisables.
+          Savoir comment <strong>choisir les participants</strong> d’une étude de recherche en santé pour que les résultats soient
+          <strong> fiables</strong>, <strong>représentatifs</strong> et <strong>généralisables</strong> à la population cible.
         </Typography>
       </Alert>
 
-      <section aria-labelledby="concepts-heading">
-        <Typography id="concepts-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          📚 1) Concepts clés (clairs et opérationnels)
+      {/* 1) Logique & définitions */}
+      <section aria-labelledby="logic-heading">
+        <Typography id="logic-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
+          🧩 1) Comprendre la logique de l’échantillonnage
         </Typography>
 
         <TableContainer component={Paper} sx={{ my: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'primary.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Terme</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Définition pratique</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Exemple santé</TableCell>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Terme</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Définition simple</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Exemple santé</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <TableRow>
                 <TableCell><strong>Population cible</strong></TableCell>
-                <TableCell>Ensemble théorique auquel on souhaite généraliser les résultats</TableCell>
-                <TableCell>Tous les ≥65 ans vivant à domicile d'une région</TableCell>
+                <TableCell>Groupe auquel on veut appliquer les résultats</TableCell>
+                <TableCell>Tous les adultes d’une ville</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>Population accessible / cadre d'étude</strong></TableCell>
-                <TableCell>Sous-ensemble réellement accessible</TableCell>
-                <TableCell>Les dossiers patients suivis par 5 centres de santé</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><strong>Critères d'inclusion/exclusion</strong></TableCell>
-                <TableCell>Règles d'éligibilité pour garantir comparabilité/sécurité</TableCell>
-                <TableCell>Inclusion : ≥65 ans, marche autonome ; Exclusion : démence sévère</TableCell>
-              </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>Unité d'échantillonnage</strong></TableCell>
-                <TableCell>Élément tiré au sort (personne, ménage, service…)</TableCell>
-                <TableCell>Patient ; ou "service" en sondage en grappes</TableCell>
+              <TableRow sx={{ backgroundColor: (t) => t.palette.grey[50] }}>
+                <TableCell><strong>Population accessible</strong></TableCell>
+                <TableCell>Groupe qu’on peut effectivement atteindre</TableCell>
+                <TableCell>Adultes suivis dans les CS d’Oujda</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell><strong>Population statique</strong></TableCell>
-                <TableCell>"Photo" d'un groupe à un moment donné</TableCell>
-                <TableCell>Enquête transversale un jour donné</TableCell>
+                <TableCell><strong>Cadre d’échantillonnage</strong></TableCell>
+                <TableCell>Liste utilisée pour tirer les participants</TableCell>
+                <TableCell>Registre des patients du centre</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>Population dynamique</strong></TableCell>
-                <TableCell>Groupe suivi dans le temps (entrées/sorties possibles)</TableCell>
-                <TableCell>Cohorte sur 12 mois</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><strong>Cohorte (fermée)</strong></TableCell>
-                <TableCell>Dynamique mais fermée après inclusion ; on suit les mêmes individus</TableCell>
-                <TableCell>Suivi 6 mois de tous les inclus au départ</TableCell>
+              <TableRow sx={{ backgroundColor: (t) => t.palette.grey[50] }}>
+                <TableCell><strong>Échantillon</strong></TableCell>
+                <TableCell>Sous-groupe de la population étudié</TableCell>
+                <TableCell>400 adultes tirés au sort</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -283,122 +300,28 @@ export default function Step8PopulationEchantillon() {
 
         <Alert severity="success" sx={{ my: 3 }}>
           <AlertTitle>💡 Règle d'or</AlertTitle>
-          Définis d'abord la <strong>population cible</strong> → puis le <strong>cadre d'échantillonnage réaliste</strong> → puis les <strong>critères</strong>.
+          Définir d’abord la <strong>population d’étude</strong> (qui, où, quand) → le <strong>cadre</strong> → les <strong>critères d’inclusion/exclusion</strong>.
         </Alert>
       </section>
 
-      <section aria-labelledby="plans-heading">
-        <Typography id="plans-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          🎯 2) Plans d'échantillonnage (choisir selon l'objectif et le terrain)
-        </Typography>
-
-        <Typography variant="h6" component="h4" sx={{ mt: 3, mb: 2 }}>
-          A. Probabilistes (représentativité statistique)
-        </Typography>
-
-        <TableContainer component={Paper} sx={{ my: 3 }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: 'success.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>Plan</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>Comment</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>Quand l'utiliser</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell><strong>Aléatoire simple</strong></TableCell>
-                <TableCell>Tirage au sort direct dans une liste complète</TableCell>
-                <TableCell>Petite population avec liste fiable</TableCell>
-              </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>Systématique</strong></TableCell>
-                <TableCell>1er tirage au hasard, puis 1 sur k</TableCell>
-                <TableCell>Flux régulier (ex. dossiers, admissions)</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><strong>Stratifié</strong></TableCell>
-                <TableCell>Tirage séparé par strates (âge, sexe, service)</TableCell>
-                <TableCell>Assurer la présence de sous-groupes clés</TableCell>
-              </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>En grappes (clusters)</strong></TableCell>
-                <TableCell>Tirer des groupes (écoles, services), puis tous/quelques individus</TableCell>
-                <TableCell>Territoires étendus ; logistique limitée</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><strong>À plusieurs degrés</strong></TableCell>
-                <TableCell>Combinaison (ex. districts → centres → patients)</TableCell>
-                <TableCell>Enquêtes populationnelles</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <Typography variant="h6" component="h4" sx={{ mt: 3, mb: 2 }}>
-          B. Non probabilistes (quand la randomisation est impossible)
-        </Typography>
-
-        <TableContainer component={Paper} sx={{ my: 3 }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: 'warning.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'warning.contrastText' }}>Plan</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'warning.contrastText' }}>Comment</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'warning.contrastText' }}>Notes</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell><strong>De convenance</strong></TableCell>
-                <TableCell>Qui est disponible</TableCell>
-                <TableCell>Rapide mais biais de sélection</TableCell>
-              </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>Par quotas</strong></TableCell>
-                <TableCell>Remplir des quotas par catégories</TableCell>
-                <TableCell>Approche descriptive, prudence pour l'inférence</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><strong>Raisonné (purposive)</strong></TableCell>
-                <TableCell>Sélection experte de cas typiques</TableCell>
-                <TableCell>Études qualitatives, exploratoires</TableCell>
-              </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
-                <TableCell><strong>Boule de neige</strong></TableCell>
-                <TableCell>Réseaux/chaines (populations difficiles d'accès)</TableCell>
-                <TableCell>Biais d'homophilie, à déclarer</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <Alert severity="info" sx={{ my: 3 }}>
-          <AlertTitle>⚖️ À retenir</AlertTitle>
-          <strong>Priorité aux plans probabilistes</strong> pour l'inférence. Les non probabilistes restent utiles (pilotes, qualitatif, terrain contraint) mais déclare leurs limites.
-        </Alert>
-      </section>
-
+      {/* 2) Étapes à suivre */}
       <section aria-labelledby="etapes-heading">
         <Typography id="etapes-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          📋 3) Étapes pour définir "Population & Échantillon"
+          🧭 2) Étapes à suivre
         </Typography>
 
-        <Paper elevation={2} sx={{ p: 3, my: 3, backgroundColor: "info.light" }}>
-          <List sx={{ color: "info.contrastText" }}>
+        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
+          <List>
             {[
-              "Écris ta question PICOT (Étapes 2–6)",
-              "Décris la population cible (qui, où, quand)",
-              "Précise le cadre d'étude (bases de sondage, registres, services)",
-              "Fixe inclusion/exclusion (cliniques, géo-temporelles, sécurité)",
-              "Choisis le plan d'échantillonnage (probabiliste si possible)",
-              "Anticipe non-réponse/attrition (taux attendu, relances)",
-              "Calcule la taille d'échantillon (voir section 4)",
-              "Documente la logistique (qui tire ? comment ? traçabilité ?)"
+              "1️⃣ Définir la population d’étude : qui est concerné, où et quand ?",
+              "2️⃣ Choisir la méthode d’échantillonnage : aléatoire, stratifié, grappes…",
+              "3️⃣ Calculer la taille d’échantillon : combien de sujets sont nécessaires ?",
+              "4️⃣ Tirer les participants selon la méthode choisie.",
+              "5️⃣ Contrôler les biais (non-réponses, mauvaise représentativité)."
             ].map((step, index) => (
               <ListItem key={index}>
                 <ListItemIcon>
-                  <Chip label={index + 1} size="small" sx={{ backgroundColor: 'info.contrastText', color: 'info.main' }} />
+                  <Chip label={index + 1} size="small" />
                 </ListItemIcon>
                 <ListItemText primary={step} />
               </ListItem>
@@ -407,158 +330,314 @@ export default function Step8PopulationEchantillon() {
         </Paper>
       </section>
 
-      <section aria-labelledby="formules-heading">
-        <Typography id="formules-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          📐 4) Taille d'échantillon — principes & formules utiles
+      {/* 3) Méthodes d'échantillonnage */}
+      <section aria-labelledby="plans-heading">
+        <Typography id="plans-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
+          🧮 3) Les grandes méthodes d’échantillonnage
         </Typography>
 
         <Typography variant="h6" component="h4" sx={{ mt: 3, mb: 2 }}>
-          Paramètres communs
+          A. Méthodes probabilistes (pour l’inférence)
         </Typography>
 
-        <Grid container spacing={2} sx={{ my: 2 }}>
-          {[
-            { param: "Risque α", value: "5% par défaut, Zα/2=1,96", color: "primary" },
-            { param: "Puissance 1−β", value: "80% → Zβ=0,84 ; 90% → 1,28", color: "secondary" },
-            { param: "Effet recherché Δ", value: "Différence minimale cliniquement pertinente", color: "warning" },
-            { param: "Variabilité", value: "Écart-type σ, proportion p", color: "info" },
-            { param: "Type de plan", value: "Individuel vs grappes → design effect", color: "success" },
-            { param: "Ajustements", value: "Non-réponse, attrition, correction population finie", color: "error" }
-          ].map((item, index) => (
-            <Grid item xs={12} md={6} key={index}>
-              <Card elevation={1} sx={{ backgroundColor: `${item.color}.light`, height: '100%' }}>
-                <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: `${item.color}.contrastText`, mb: 1 }}>
-                    {item.param}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: `${item.color}.contrastText` }}>
-                    {item.value}
-                  </Typography>
-                </CardContent>
-              </Card>
+        <TableContainer component={Paper} sx={{ my: 3 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Principe</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Exemple santé</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell><strong>Aléatoire simple</strong></TableCell>
+                <TableCell>Tirage pur au hasard</TableCell>
+                <TableCell>100 patients sur 1 000 tirés via Excel</TableCell>
+              </TableRow>
+              <TableRow sx={{ backgroundColor: (t) => t.palette.grey[50] }}>
+                <TableCell><strong>Stratifié</strong></TableCell>
+                <TableCell>Strates homogènes (âge, sexe…) puis tirage dans chaque strate</TableCell>
+                <TableCell>Étude diabète : 50 % hommes, 50 % femmes</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell><strong>Par grappes (clusters)</strong></TableCell>
+                <TableCell>Tirage de groupes (écoles, services), puis inclusion de tous/quelques sujets</TableCell>
+                <TableCell>10 écoles sélectionnées → tous les élèves</TableCell>
+              </TableRow>
+              <TableRow sx={{ backgroundColor: (t) => t.palette.grey[50] }}>
+                <TableCell><strong>À plusieurs degrés</strong></TableCell>
+                <TableCell>District → école → classe → élèves (PPS possible)</TableCell>
+                <TableCell>Enquête OMS à deux degrés</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Paper elevation={0} sx={{ p: 2, borderLeft: '4px solid', borderColor: 'primary.main', bgcolor: (t)=>t.palette.grey[50] }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>🔎 Définitions-clés (théorie, niveau requis)</Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            <strong>Stratifié :</strong> diviser la population en <em>strates homogènes</em> et tirer au hasard dans chaque strate, souvent proportionnellement, pour <em>garantir la représentativité</em> des sous-groupes.
+            <br/>
+            <strong>OMS à deux degrés (PPS) :</strong> 1) tirage des grappes (ex. services, villages) <em>proportionnel à leur taille</em> ; 2) tirage aléatoire d’unités dans chaque grappe.
+          </Typography>
+        </Paper>
+
+        <Typography variant="h6" component="h4" sx={{ mt: 4, mb: 2 }}>
+          B. Méthodes non probabilistes (exploratoires)
+        </Typography>
+
+        <TableContainer component={Paper} sx={{ my: 3 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Principe</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Exemple santé</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell><strong>De convenance</strong></TableCell>
+                <TableCell>Sujets les plus accessibles</TableCell>
+                <TableCell>Patients venus en consultation</TableCell>
+              </TableRow>
+              <TableRow sx={{ backgroundColor: (t) => t.palette.grey[50] }}>
+                <TableCell><strong>De volontaires</strong></TableCell>
+                <TableCell>Participation libre (biais possible)</TableCell>
+                <TableCell>Étude en ligne sur le stress</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell><strong>Par quotas</strong></TableCell>
+                <TableCell>Respect de proportions (âge, sexe)</TableCell>
+                <TableCell>Enquête de satisfaction</TableCell>
+              </TableRow>
+              <TableRow sx={{ backgroundColor: (t) => t.palette.grey[50] }}>
+                <TableCell><strong>Boule de neige</strong></TableCell>
+                <TableCell>Chaque participant recrute un autre</TableCell>
+                <TableCell>Usagers de drogues</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Alert severity="info" sx={{ my: 3 }}>
+          <AlertTitle>⚖️ À retenir</AlertTitle>
+          <strong>Priorité aux plans probabilistes</strong> pour l’inférence. Les non probabilistes sont utiles pour pilotes/qualitatif, mais leurs limites doivent être <strong>déclarées</strong>.
+        </Alert>
+      </section>
+
+      {/* 4) Taille d'échantillon */}
+      <section aria-labelledby="formules-heading">
+        <Typography id="formules-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
+          📏 4) Calcul de la taille d’échantillon
+        </Typography>
+
+        <Paper elevation={1} sx={{ p: 3, my: 2, backgroundColor: (t)=>t.palette.grey[50] }}>
+                    {/* Formule 1: Étude descriptive */}
+          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+            A. Étude descriptive (estimation d'une proportion)
+          </Typography>
+          
+          <FormulaBox 
+            formula="n = Z_{\\alpha/2}^2 \\times p(1-p) / d^2"
+            color="primary.main"
+            size="large"
+          />
+
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Paramètres :</strong>
+                <br/>• Z<sub>α/2</sub> : quantile normal (1,96 pour 95%)
+                <br/>• p : proportion attendue (0,5 si inconnue)
+                <br/>• d : marge d'erreur acceptée (ex. 0,05)
+              </Typography>
             </Grid>
-          ))}
-        </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Exemple :</strong>
+                <br/>Z=1,96, p=0,5, d=0,05
+                <br/>⟹ n = (1,96)² × 0,5 × 0,5 / (0,05)²
+                <br/>⟹ n ≈ 384 sujets
+              </Typography>
+            </Grid>
+          </Grid>
 
-        <Typography variant="h6" component="h4" sx={{ mt: 4, mb: 2 }}>
-          A. Estimer une prévalence (en transversal)
-        </Typography>
+          <Typography variant="body2" sx={{ fontStyle: 'italic', mb: 1 }}>
+            <strong>Ajustements :</strong>
+          </Typography>
+          <Stack spacing={2} sx={{ mb: 3 }}>
+            <Box>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>1. Correction population finie :</strong>
+              </Typography>
+              <SmallFormulaBox formula="n_{corr} = \\frac{n}{1 + \\frac{n-1}{N}}" />
+            </Box>
+            
+            <Box>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                <strong>2. Majoration pour non-réponse :</strong>
+              </Typography>
+              <SmallFormulaBox formula="n_{final} = \\frac{n_{corr}}{1 - taux\_non\_réponse}" />
+            </Box>
+          </Stack>
 
-        <Paper elevation={1} sx={{ p: 3, my: 2, backgroundColor: 'grey.50' }}>
-          <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-            n = Z² × p(1-p) / d²
-          </Typography>
-          <Typography variant="body2" paragraph>
-            • <strong>p</strong> : proportion attendue (si inconnue, 0,5 = pire cas)
-            <br />• <strong>d</strong> : précision (marge d'erreur), ex. 0,05
-          </Typography>
-          <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-            <strong>Exemple :</strong> Z=1,96, p=0,5, d=0,05 ⇒ n ≈ 384
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 2 }}>
-            <strong>Correction population finie</strong> (si N est petit) : n_corr = n / (1 + (n-1)/N)
-          </Typography>
-        </Paper>
+          <Divider sx={{ my: 3 }}/>
 
-        <Typography variant="h6" component="h4" sx={{ mt: 4, mb: 2 }}>
-          B. Comparer deux proportions (ECR, quasi-exp, cohorte, cas-témoins)
-        </Typography>
+          {/* Formule 2: Deux proportions */}
+          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+            B. Comparaison de deux proportions (ECR, cohorte, cas-témoins)
+          </Typography>
+          
+          <FormulaBox 
+            formula="n_{par \\, groupe} = \\frac{\\left[Z_{\\alpha/2}\\sqrt{2\\bar{p}(1-\\bar{p})} + Z_{\\beta}\\sqrt{p_1(1-p_1) + p_2(1-p_2)}\\right]^2}{(p_1-p_2)^2}"
+            color="secondary.main"
+            size="medium"
+          />
 
-        <Paper elevation={1} sx={{ p: 3, my: 2, backgroundColor: 'grey.50' }}>
-          <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontSize: '0.9rem' }}>
-            n/gpe ≈ (Zα/2√[2p̄(1-p̄)] + Zβ√[p₁(1-p₁)+p₂(1-p₂)])² / (p₁-p₂)²
-          </Typography>
-          <Typography variant="body2" paragraph>
-            • <strong>p₁, p₂</strong> : proportions attendues (contrôle vs intervention)
-            <br />• <strong>p̄ = (p₁+p₂)/2</strong>
-          </Typography>
-          <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-            <strong>Exemple (prévention des chutes) :</strong> p₁=0,30 (témoin) vs p₂=0,21 (-30% relatif), α=5%, puissance=80% → ≈ 367 / groupe.
-            <br />Avec 10% de pertes : ≈ 408 / groupe.
-          </Typography>
-        </Paper>
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Paramètres :</strong>
+                <br/>• Z<sub>α/2</sub> : risque α (1,96 pour 5%)
+                <br/>• Z<sub>β</sub> : puissance (0,84 pour 80%)
+                <br/>• p₁, p₂ : proportions dans chaque groupe
+                <br/>• p̄ = (p₁+p₂)/2 : proportion poolée
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Exemple :</strong>
+                <br/>p₁=30% (contrôle), p₂=21% (intervention)
+                <br/>α=5%, puissance=80%
+                <br/>⟹ ≈ 367 sujets par groupe
+                <br/>+10% pertes ⟹ ≈ 408/groupe
+              </Typography>
+            </Grid>
+          </Grid>
 
-        <Typography variant="h6" component="h4" sx={{ mt: 4, mb: 2 }}>
-          C. Comparer deux moyennes (score d'équilibre, etc.)
-        </Typography>
+          <Divider sx={{ my: 3 }}/>
 
-        <Paper elevation={1} sx={{ p: 3, my: 2, backgroundColor: 'grey.50' }}>
-          <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
-            n/gpe ≈ 2(Zα/2 + Zβ)² × σ² / Δ²
+          {/* Formule 3: Deux moyennes */}
+          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+            C. Comparaison de deux moyennes (variables continues)
           </Typography>
-          <Typography variant="body2">
-            • <strong>σ</strong> : écart-type (pilote/littérature)
-            <br />• <strong>Δ</strong> : différence minimale cliniquement pertinente
-          </Typography>
-        </Paper>
+          
+          <FormulaBox 
+            formula="n_{par \\, groupe} = \\frac{2(Z_{\\alpha/2} + Z_{\\beta})^2 \\times \\sigma^2}{\\Delta^2}"
+            color="success.main"
+            size="large"
+          />
 
-        <Typography variant="h6" component="h4" sx={{ mt: 4, mb: 2 }}>
-          D. Sondage en grappes (écoles, services)
-        </Typography>
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Paramètres :</strong>
+                <br/>• σ : écart-type (littérature/pilote)
+                <br/>• Δ : différence cliniquement significative
+                <br/>• Z<sub>α/2</sub>, Z<sub>β</sub> : comme précédemment
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Exemple :</strong>
+                <br/>Score d'équilibre : σ=15
+                <br/>Δ=8 points (cliniquement pertinent)
+                <br/>α=5%, puissance=80%
+                <br/>⟹ ≈ 56 sujets par groupe
+              </Typography>
+            </Grid>
+          </Grid>
 
-        <Paper elevation={1} sx={{ p: 3, my: 2, backgroundColor: 'grey.50' }}>
-          <Typography variant="body2" paragraph>
-            <strong>Effet de plan :</strong> DEFF = 1 + (m-1) × ICC
-            <br />• <strong>m</strong> : taille moyenne de grappe
-            <br />• <strong>ICC</strong> : corrélation intra-grappe (0,01–0,05 en pratique)
+          <Divider sx={{ my: 3 }}/>
+
+          {/* Formule 4: Sondage en grappes */}
+          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+            D. Sondage en grappes (clusters)
           </Typography>
-          <Typography variant="body2">
-            <strong>Échantillon effectif :</strong> n_final = n_théorique × DEFF
-            <br />Puis gonfle pour la non-réponse (ex. n/0,85 si 15% de non-réponse)
-          </Typography>
+          
+          <FormulaBox 
+            formula="DEFF = 1 + (m-1) \\times ICC"
+            color="warning.main"
+            size="large"
+          />
+
+          <SmallFormulaBox formula="n_{ajusté} = n_{théorique} \\times DEFF" />
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Paramètres :</strong>
+                <br/>• m : taille moyenne des grappes
+                <br/>• ICC : corrélation intra-grappe (0,01–0,05)
+                <br/>• DEFF : design effect (effet de plan)
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body2">
+                <strong>Exemple :</strong>
+                <br/>n théorique = 384
+                <br/>m=20 patients/service, ICC=0,02
+                <br/>DEFF = 1+(19×0,02) = 1,38
+                <br/>⟹ n = 384×1,38 ≈ 530 sujets
+              </Typography>
+            </Grid>
+          </Grid>
+
+          <Alert severity="info" sx={{ mt: 2 }}>
+            <Typography variant="body2">
+              <strong>Note :</strong> Plus l'ICC est élevé ou les grappes sont grandes, plus il faut augmenter la taille d'échantillon par rapport à un sondage aléatoire simple.
+            </Typography>
+          </Alert>
         </Paper>
       </section>
 
+      {/* 5) Exemples rapides */}
       <section aria-labelledby="exemples-heading">
         <Typography id="exemples-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          💼 5) Exemples-guides (rapides)
+          🧪 5) Exemples-guides (rapides)
         </Typography>
 
         <Grid container spacing={3} sx={{ my: 3 }}>
           <Grid item xs={12} md={4}>
-            <Card elevation={2} sx={{ height: '100%', backgroundColor: 'success.light' }}>
+            <Card elevation={2} sx={{ height: '100%' }}>
               <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.contrastText', mb: 2 }}>
-                  ✅ Exemple 1 — Enquête de prévalence
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  ✅ Enquête de prévalence
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'success.contrastText' }}>
-                  <strong>Objectif :</strong> prévalence des escarres (d=5%, p inconnu → 0,5)
-                  <br />n ≈ 384
-                  <br />Population finie N=1200 → n_corr ≈ 291
-                  <br />Non-réponse 10% → ≈ 324 à recruter
+                <Typography variant="body2">
+                  d=5%, p inconnu → p=0,5 → n ≈ 384
+                  <br/>N=1200 → n<sub>corr</sub> ≈ 291
+                  <br/>Non-réponse 10% → ≈ 324 à recruter
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card elevation={2} sx={{ height: '100%', backgroundColor: 'info.light' }}>
+            <Card elevation={2} sx={{ height: '100%' }}>
               <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'info.contrastText', mb: 2 }}>
-                  ✅ Exemple 2 — ECR exercices vs soins usuels
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  ✅ ECR (deux proportions)
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'info.contrastText' }}>
-                  <strong>Objectif :</strong> deux proportions
-                  <br />Contrôle p₁=0,30 ; Intervention p₂=0,21
-                  <br />α=5%, 80% puissance
-                  <br />≈ 367 par groupe ; pertes 10% → ≈ 408 par groupe
+                <Typography variant="body2">
+                  p₁=0,30 ; p₂=0,21 ; α=5% ; 80% puissance
+                  <br/>≈ 367/groupe ; +10% pertes → ≈ 408/groupe
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card elevation={2} sx={{ height: '100%', backgroundColor: 'warning.light' }}>
+            <Card elevation={2} sx={{ height: '100%' }}>
               <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'warning.contrastText', mb: 2 }}>
-                  ✅ Exemple 3 — Clusters (services)
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  ✅ Clusters (services)
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'warning.contrastText' }}>
-                  <strong>Objectif :</strong> services hospitaliers
-                  <br />n théorique = 384 ; m=20, ICC=0,02
-                  <br />DEFF = 1+(19×0,02) = 1,38
-                  <br />n_final = 384×1,38 ≈ 530
-                  <br />Réponse 85% → ≈ 624 à prévoir
+                <Typography variant="body2">
+                  n=384 ; m=20 ; ICC=0,02 → DEFF=1,38
+                  <br/>n×DEFF ≈ 530 ; réponse 85% → ≈ 624
                 </Typography>
               </CardContent>
             </Card>
@@ -566,6 +645,7 @@ export default function Step8PopulationEchantillon() {
         </Grid>
       </section>
 
+      {/* 6) Check-list */}
       <section aria-labelledby="checklist-heading">
         <Typography id="checklist-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
           ✅ 6) Check-list qualité (à mettre dans le protocole)
@@ -591,9 +671,10 @@ export default function Step8PopulationEchantillon() {
         </List>
       </section>
 
+      {/* 7) Exercices interactifs */}
       <section aria-labelledby="exercises-heading">
         <Typography id="exercises-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          ✏️ Activités interactives
+          ✏️ 7) Activités interactives
         </Typography>
 
         {/* Exercice 1 */}
@@ -603,7 +684,7 @@ export default function Step8PopulationEchantillon() {
               🎮 Exercice 1 — « Quel plan d'échantillonnage ? »
             </Typography>
             <Typography paragraph>
-              Associe chaque objectif au plan d'échantillonnage approprié :
+              Associe chaque objectif au plan approprié :
             </Typography>
 
             <Stack spacing={3}>
@@ -636,30 +717,22 @@ export default function Step8PopulationEchantillon() {
 
             <Box sx={{ mt: 3, textAlign: 'center' }}>
               <Stack direction="row" spacing={2} justifyContent="center">
-                <Button 
-                  variant="outlined" 
-                  color="secondary" 
-                  onClick={resetExercise1}
-                >
+                <Button variant="outlined" color="secondary" onClick={resetExercise1}>
                   Réinitialiser
                 </Button>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  onClick={() => setShowExercise1Answers(!showExercise1Answers)}
-                >
+                <Button variant="contained" color="primary" onClick={() => setShowExercise1Answers(!showExercise1Answers)}>
                   {showExercise1Answers ? 'Masquer les réponses' : 'Vérifier mes réponses'}
                 </Button>
               </Stack>
             </Box>
 
             <Collapse in={showExercise1Answers}>
-              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: checkExercise1Score() === 3 ? 'success.light' : 'warning.light' }}>
+              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: (t)=> (checkExercise1Score() === 3 ? t.palette.success.light : t.palette.warning.light) }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                   {checkExercise1Score() === 3 ? `🎉 Parfait ! Score: ${checkExercise1Score()}/3` : `📝 Score: ${checkExercise1Score()}/3 - Réponses correctes :`}
                 </Typography>
                 <Stack spacing={1}>
-                  {exercise1Cases.map((c, index) => (
+                  {exercise1Cases.map((c) => (
                     <Typography key={c.id} variant="body2">
                       <strong>{c.case} :</strong> {c.correctAnswer} ✅
                     </Typography>
@@ -670,15 +743,13 @@ export default function Step8PopulationEchantillon() {
           </CardContent>
         </Card>
 
-        {/* Exercice 2 */}
+        {/* Exercice 2 — tailles */}
         <Card sx={{ my: 3 }}>
           <CardContent>
             <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
               🧩 Exercice 2 — « Calcule vite ! »
             </Typography>
-            <Typography paragraph>
-              Utilise les paramètres ci-dessous pour calculer les tailles d'échantillon :
-            </Typography>
+            <Typography paragraph>Utilise les paramètres ci-dessous :</Typography>
 
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
@@ -772,15 +843,15 @@ export default function Step8PopulationEchantillon() {
                 </Button>
 
                 {exercise2Results.nBase > 0 && (
-                  <Paper elevation={1} sx={{ p: 2, backgroundColor: 'success.light' }}>
-                    <Typography variant="body2" sx={{ color: 'success.contrastText' }}>
+                  <Paper elevation={1} sx={{ p: 2 }}>
+                    <Typography variant="body2">
                       <strong>Prévalence inconnue (p=0.5) :</strong>
                       <br />• n de base : {exercise2Results.nBase}
                       <br />• Avec correction finie : {exercise2Results.nCorr}
                       <br />• Avec non-réponse : {exercise2Results.nFinal}
                     </Typography>
                     <Divider sx={{ my: 1 }} />
-                    <Typography variant="body2" sx={{ color: 'success.contrastText' }}>
+                    <Typography variant="body2">
                       <strong>Deux proportions ({exercise2Inputs.prop1}% vs {exercise2Inputs.prop2}%) :</strong>
                       <br />• n par groupe : {exercise2Results.nPerGroup}
                     </Typography>
@@ -795,35 +866,57 @@ export default function Step8PopulationEchantillon() {
                 color="primary" 
                 onClick={() => setShowExercise2Answers(!showExercise2Answers)}
               >
-                {showExercise2Answers ? 'Masquer l\'explication' : 'Voir l\'explication des formules'}
+                {showExercise2Answers ? "Masquer l'explication" : "Voir l'explication des formules"}
               </Button>
             </Box>
 
             <Collapse in={showExercise2Answers}>
-              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: 'info.light' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: 'info.contrastText' }}>
+              <Paper elevation={1} sx={{ p: 3, mt: 3, backgroundColor: 'grey.50' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                   💡 Formules utilisées :
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'info.contrastText' }}>
-                  <strong>1. Prévalence :</strong> n = Z² × p(1-p) / d² = 1,96² × 0,5 × 0,5 / d²
-                  <br /><strong>2. Correction finie :</strong> n_corr = n / (1 + (n-1)/N)
-                  <br /><strong>3. Non-réponse :</strong> n_final = n_corr / (1 - taux_non_réponse)
-                  <br /><strong>4. Deux proportions :</strong> Formule complexe avec Z_α/2 et Z_β
-                </Typography>
+                
+                <Stack spacing={2}>
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>1. Prévalence :</Typography>
+                    <Box sx={{ textAlign: 'center', py: 1, backgroundColor: 'white', borderRadius: 1, border: '1px solid', borderColor: 'primary.main' }}>
+                      <BlockMath math="n = Z_{\\alpha/2}^2 \\times p(1-p) / d^2" />
+                    </Box>
+                  </Box>
+
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>2. Correction finie :</Typography>
+                    <Box sx={{ textAlign: 'center', py: 1, backgroundColor: 'white', borderRadius: 1, border: '1px solid', borderColor: 'grey.400' }}>
+                      <BlockMath math="n_{corr} = \\frac{n}{1 + \\frac{n-1}{N}}" />
+                    </Box>
+                  </Box>
+
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>3. Non-réponse :</Typography>
+                    <Box sx={{ textAlign: 'center', py: 1, backgroundColor: 'white', borderRadius: 1, border: '1px solid', borderColor: 'grey.400' }}>
+                      <BlockMath math="n_{final} = \\frac{n_{corr}}{1 - taux\_non\_réponse}" />
+                    </Box>
+                  </Box>
+
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>4. Deux proportions :</Typography>
+                    <Box sx={{ textAlign: 'center', py: 1, backgroundColor: 'white', borderRadius: 1, border: '1px solid', borderColor: 'secondary.main' }}>
+                      <BlockMath math="n_{groupe} = \\frac{\\left[Z_{\\alpha/2}\\sqrt{2\\bar{p}(1-\\bar{p})} + Z_{\\beta}\\sqrt{p_1(1-p_1) + p_2(1-p_2)}\\right]^2}{(p_1-p_2)^2}" />
+                    </Box>
+                  </Box>
+                </Stack>
               </Paper>
             </Collapse>
           </CardContent>
         </Card>
 
-        {/* Exercice 3 */}
+        {/* Exercice 3 — statique/dynamique */}
         <Card sx={{ my: 3 }}>
           <CardContent>
             <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
               🧠 Exercice 3 — « Statique ou dynamique ? »
             </Typography>
-            <Typography paragraph>
-              Identifie le type de population pour chaque situation :
-            </Typography>
+            <Typography paragraph>Identifie le type de population :</Typography>
 
             <Stack spacing={3}>
               {exercise3Cases.map((c, index) => (
@@ -853,30 +946,22 @@ export default function Step8PopulationEchantillon() {
 
             <Box sx={{ mt: 3, textAlign: 'center' }}>
               <Stack direction="row" spacing={2} justifyContent="center">
-                <Button 
-                  variant="outlined" 
-                  color="secondary" 
-                  onClick={resetExercise3}
-                >
+                <Button variant="outlined" color="secondary" onClick={resetExercise3}>
                   Réinitialiser
                 </Button>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  onClick={() => setShowExercise3Answers(!showExercise3Answers)}
-                >
+                <Button variant="contained" color="primary" onClick={() => setShowExercise3Answers(!showExercise3Answers)}>
                   {showExercise3Answers ? 'Masquer les réponses' : 'Vérifier mes réponses'}
                 </Button>
               </Stack>
             </Box>
 
             <Collapse in={showExercise3Answers}>
-              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: checkExercise3Score() === 3 ? 'success.light' : 'warning.light' }}>
+              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: (t)=> (checkExercise3Score() === 3 ? t.palette.success.light : t.palette.warning.light) }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                   {checkExercise3Score() === 3 ? `🎉 Excellent ! Score: ${checkExercise3Score()}/3` : `📝 Score: ${checkExercise3Score()}/3 - Réponses correctes :`}
                 </Typography>
                 <Stack spacing={1}>
-                  {exercise3Cases.map((c, index) => (
+                  {exercise3Cases.map((c) => (
                     <Typography key={c.id} variant="body2">
                       <strong>{c.case} :</strong> {c.correctAnswer} ✅
                     </Typography>
@@ -886,17 +971,146 @@ export default function Step8PopulationEchantillon() {
             </Collapse>
           </CardContent>
         </Card>
+
+        {/* Exercice 4 — Systématique k */}
+        <Card sx={{ my: 3 }}>
+          <CardContent>
+            <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
+              🧮 Exercice 4 — Systématique : calcule k et la séquence
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="N (taille du cadre)"
+                  type="number"
+                  value={sysInputs.N}
+                  onChange={(e)=> setSysInputs(s=>({...s, N:e.target.value}))}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="n (taille souhaitée)"
+                  type="number"
+                  value={sysInputs.n}
+                  onChange={(e)=> setSysInputs(s=>({...s, n:e.target.value}))}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Départ aléatoire"
+                  type="number"
+                  value={sysInputs.start}
+                  onChange={(e)=> setSysInputs(s=>({...s, start:e.target.value}))}
+                  fullWidth
+                />
+                <Button onClick={calcSystematic} variant="contained" sx={{ mt: 2 }} startIcon={<Calculate/>}>
+                  Calculer k & sélection
+                </Button>
+              </Grid>
+              <Grid item xs={12} md={8}>
+                <Paper elevation={1} sx={{ p:2, height: '100%' }}>
+                  <Typography variant="body2"><strong>k =</strong> {sysResult.k}</Typography>
+                  <Divider sx={{ my: 1 }}/>
+                  <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
+                    <strong>Séquence (aperçu) :</strong> {sysResult.sample.join(', ') || '—'}
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Button variant="outlined" onClick={()=> setShowExercise4Answers(!showExercise4Answers)}>
+                {showExercise4Answers ? 'Masquer l’astuce' : 'Voir l’astuce'}
+              </Button>
+            </Box>
+            <Collapse in={showExercise4Answers}>
+              <Paper elevation={0} sx={{ p:2, mt:2, bgcolor: (t)=>t.palette.grey[50] }}>
+                <Typography variant="body2">
+                  <strong>Astuce :</strong> k ≈ N/n. Choisis un départ <em>vraiment</em> aléatoire entre 1 et k, et vérifie qu’il n’y a pas de périodicité cachée dans la liste.
+                </Typography>
+              </Paper>
+            </Collapse>
+          </CardContent>
+        </Card>
+
+        {/* Exercice 5 — DEFF */}
+        <Card sx={{ my: 3 }}>
+          <CardContent>
+            <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
+              📦 Exercice 5 — Clusters : calcule ton DEFF & taille ajustée
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={5}>
+                <Stack spacing={2}>
+                  <TextField
+                    label="n0 (théorique AAS)"
+                    type="number"
+                    value={deffInputs.n0}
+                    onChange={(e)=> setDeffInputs(s=>({...s, n0:e.target.value}))}
+                    fullWidth
+                  />
+                  <TextField
+                    label="m (taille moyenne de grappe)"
+                    type="number"
+                    value={deffInputs.m}
+                    onChange={(e)=> setDeffInputs(s=>({...s, m:e.target.value}))}
+                    fullWidth
+                  />
+                  <TextField
+                    label="ICC (0,01–0,05)"
+                    type="number"
+                    value={deffInputs.icc}
+                    onChange={(e)=> setDeffInputs(s=>({...s, icc:e.target.value}))}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Taux de réponse (%)"
+                    type="number"
+                    value={deffInputs.response}
+                    onChange={(e)=> setDeffInputs(s=>({...s, response:e.target.value}))}
+                    fullWidth
+                  />
+                  <Button onClick={calcDeff} variant="contained" startIcon={<Calculate/>}>
+                    Calculer DEFF & n final
+                  </Button>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} md={7}>
+                <Paper elevation={1} sx={{ p:2, height:'100%' }}>
+                  <Typography variant="body2"><strong>DEFF :</strong> {deffResult.deff}</Typography>
+                  <Typography variant="body2"><strong>Taille finale (ajustée) :</strong> {deffResult.nFinal}</Typography>
+                  <Divider sx={{ my: 1 }}/>
+                  <Typography variant="body2">
+                    <em>Rappel :</em> <InlineMath math="DEFF = 1 + (m-1) \times ICC" /> ; <InlineMath math="n_{design} = n_0 \times DEFF" /> ; <InlineMath math="n_{final} = n_{design} / (réponse/100)" />.
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Button variant="outlined" onClick={()=> setShowExercise5Answers(!showExercise5Answers)}>
+                {showExercise5Answers ? 'Masquer le rappel' : 'Voir le rappel'}
+              </Button>
+            </Box>
+            <Collapse in={showExercise5Answers}>
+              <Paper elevation={0} sx={{ p:2, mt:2, bgcolor: (t)=>t.palette.grey[50] }}>
+                <Typography variant="body2">
+                  <strong>Interprétation :</strong> plus l’ICC est élevé ou les grappes sont grandes (m↑), plus DEFF augmente → il faut un échantillon plus grand qu’en AAS.
+                </Typography>
+              </Paper>
+            </Collapse>
+          </CardContent>
+        </Card>
       </section>
 
+      {/* 8) À retenir */}
       <section aria-labelledby="guidelines-heading">
         <Typography id="guidelines-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          🧱 À retenir
+          🧱 8) À retenir
         </Typography>
 
         <Grid container spacing={3} sx={{ my: 2 }}>
           <Grid item xs={12} md={6}>
-            <Paper elevation={1} sx={{ p: 3, height: '100%', backgroundColor: "success.light" }}>
-              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold', color: "success.contrastText" }}>
+            <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
+              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold' }}>
                 Faire ✅
               </Typography>
               <List dense>
@@ -919,8 +1133,8 @@ export default function Step8PopulationEchantillon() {
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Paper elevation={1} sx={{ p: 3, height: '100%', backgroundColor: "error.light" }}>
-              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold', color: "error.contrastText" }}>
+            <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
+              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold' }}>
                 Éviter ❌
               </Typography>
               <List dense>
@@ -931,7 +1145,7 @@ export default function Step8PopulationEchantillon() {
                   <ListItemText primary="Suréchantillonner par convenance" />
                 </ListItem>
                 <ListItem sx={{ py: 0.5 }}>
-                  <ListItemText primary="Un « n » arbitraire (« parce que 100, c'est rond »)" />
+                  <ListItemText primary="Un « n » arbitraire (« parce que 100 »)" />
                 </ListItem>
                 <ListItem sx={{ py: 0.5 }}>
                   <ListItemText primary="Oublier les pertes au suivi" />

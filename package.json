@@ -14,9 +14,11 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
+    "katex": "^0.16.25",
     "lucide-react": "^0.544.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-katex": "^3.1.0",
     "react-router-dom": "^7.9.3"
   },
   "devDependencies": {

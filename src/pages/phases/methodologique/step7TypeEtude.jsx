@@ -17,7 +17,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
   Card,
   CardContent,
   Button,
@@ -28,23 +27,15 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  FormControl,
-  FormLabel
+  FormControl
 } from '@mui/material';
 import { 
   ArrowForward, 
   Science, 
-  Timeline, 
-  Group,
-  Assignment,
-  CheckCircle,
-  Cancel,
-  Quiz,
-  Psychology,
-  AccessTime,
-  Visibility
+  CheckCircle
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
+import typesEtudesImage from '../../../assets/types-etudes.png';
 
 export default function Step7TypeEtude() {
   const [showExercise1Answers, setShowExercise1Answers] = useState(false);
@@ -170,7 +161,7 @@ export default function Step7TypeEtude() {
   };
 
   return (
-    <Box component="section" sx={{ maxWidth: "900px", mx: "auto", p: 3 }}>
+    <Box component="section" sx={{ maxWidth: "800px", mx: "auto", p: 3 }}>
       <Typography variant="h4" component="h1" sx={{ mb: 1, fontWeight: "bold" }}>
         Phase méthodologique — Étape 7
       </Typography>
@@ -214,19 +205,19 @@ export default function Step7TypeEtude() {
         <TableContainer component={Paper} sx={{ my: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'primary.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Famille</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Idée clé</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Quand l'utiliser</TableCell>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Famille</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Idée clé</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Quand l'utiliser</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow sx={{ backgroundColor: 'info.light' }}>
+              <TableRow>
                 <TableCell><strong>Non-expérimentale (observationnelle)</strong></TableCell>
                 <TableCell>On observe la réalité telle qu'elle se présente (pas de manipulation du facteur)</TableCell>
                 <TableCell>Quand l'intervention n'est pas possible (éthique, pratique) ou pour décrire/associer</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'secondary.light' }}>
+              <TableRow>
                 <TableCell><strong>Expérimentale</strong></TableCell>
                 <TableCell>On manipule le facteur (intervention) et on compare des groupes</TableCell>
                 <TableCell>Pour évaluer un effet causal d'un traitement/programme</TableCell>
@@ -242,11 +233,11 @@ export default function Step7TypeEtude() {
         <TableContainer component={Paper} sx={{ my: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'success.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>Sous-type</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>Temporalité</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>But principal</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'success.contrastText' }}>Exemple santé</TableCell>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Sous-type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Temporalité</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>But principal</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Exemple santé</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -256,23 +247,23 @@ export default function Step7TypeEtude() {
                 <TableCell>Décrire fréquence/profil (personne-lieu-temps)</TableCell>
                 <TableCell>Prévalence des escarres en gériatrie une semaine donnée</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell rowSpan={4}><strong>Étiologique</strong></TableCell>
                 <TableCell>Transversal (exposition et maladie au même moment)</TableCell>
                 <TableCell>Explorer associations (chronologie limitée)</TableCell>
                 <TableCell>Tabagisme ↔ HTA chez des travailleurs (mesure unique)</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell>Longitudinal</TableCell>
                 <TableCell>Établir le sens exposition→événement</TableCell>
                 <TableCell></TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'warning.light' }}>
+              <TableRow>
                 <TableCell>→ Cohorte (directe)</TableCell>
                 <TableCell>Départ sur l'exposition (E+ vs E−) → suivre la maladie</TableCell>
                 <TableCell>Exposés au bruit vs non exposés → surdité</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'error.light' }}>
+              <TableRow>
                 <TableCell>→ Cas-témoins (à rebours)</TableCell>
                 <TableCell>Départ sur la maladie (cas vs témoins) → remonter à l'exposition</TableCell>
                 <TableCell>Cancer broncho-pulmonaire (cas) vs autres (témoins) → tabagisme</TableCell>
@@ -293,21 +284,21 @@ export default function Step7TypeEtude() {
         <TableContainer component={Paper} sx={{ my: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'secondary.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'secondary.contrastText' }}>Type</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'secondary.contrastText' }}>Affectation</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'secondary.contrastText' }}>Atout</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'secondary.contrastText' }}>Exemple</TableCell>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Affectation</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Atout</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Exemple</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow sx={{ backgroundColor: 'success.light' }}>
+              <TableRow>
                 <TableCell><strong>Essai randomisé (ECR)</strong></TableCell>
                 <TableCell>Randomisation (hasard)</TableCell>
                 <TableCell>Meilleur contrôle des facteurs confondants → preuve forte</TableCell>
                 <TableCell>Programme d'exercices vs soins usuels</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'warning.light' }}>
+              <TableRow>
                 <TableCell><strong>Quasi-expérimental</strong></TableCell>
                 <TableCell>Sans randomisation (groupes naturels)</TableCell>
                 <TableCell>Faisable quand randomiser est impossible</TableCell>
@@ -326,24 +317,24 @@ export default function Step7TypeEtude() {
         <TableContainer component={Paper} sx={{ my: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'primary.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Concept</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Définition</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'primary.contrastText' }}>Utilité pour le design</TableCell>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Concept</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Définition</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Utilité pour le design</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow sx={{ backgroundColor: 'info.light' }}>
+              <TableRow>
                 <TableCell><strong>Statique</strong></TableCell>
                 <TableCell>Individus observés à un même moment</TableCell>
                 <TableCell>Typique transversal (prévalence)</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'warning.light' }}>
+              <TableRow>
                 <TableCell><strong>Dynamique – ouverte</strong></TableCell>
                 <TableCell>Entrées/sorties possibles au fil du temps</TableCell>
                 <TableCell>Mortalité annuelle d'une ville (entrées/sorties)</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'success.light' }}>
+              <TableRow>
                 <TableCell><strong>Dynamique – fermée = cohorte</strong></TableCell>
                 <TableCell>Groupe fixé après inclusion ; suivi dans le temps</TableCell>
                 <TableCell>Cohorte (incidence, survie, temps-événement)</TableCell>
@@ -353,17 +344,45 @@ export default function Step7TypeEtude() {
         </TableContainer>
       </section>
 
+      <section aria-labelledby="synthesis-image-heading">
+        <Typography id="synthesis-image-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
+          📋 Synthèse visuelle des types d'études
+        </Typography>
+        
+        <Paper elevation={2} sx={{ p: 3, my: 3, textAlign: 'center' }}>
+          <Typography variant="h6" component="h4" sx={{ mb: 3 }}>
+            Panorama complet des designs d'étude
+          </Typography>
+          <Box
+            component="img"
+            src={typesEtudesImage}
+            alt="Schéma de synthèse des différents types d'études en recherche en santé"
+            sx={{
+              maxWidth: '100%',
+              height: 'auto',
+              border: '1px solid',
+              borderColor: 'grey.300',
+              borderRadius: 1,
+              boxShadow: 1
+            }}
+          />
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+            <em>Schéma de synthèse : classification des études selon le degré de contrôle et la temporalité</em>
+          </Typography>
+        </Paper>
+      </section>
+
       <section aria-labelledby="decision-tree-heading">
         <Typography id="decision-tree-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
           🌳 3) Comment choisir ? (Arbre de décision rapide)
         </Typography>
 
-        <Paper elevation={2} sx={{ p: 3, my: 3, backgroundColor: "warning.light" }}>
-          <Typography variant="h6" component="h4" sx={{ mb: 2, color: "warning.contrastText" }}>
+        <Paper elevation={2} sx={{ p: 3, my: 3 }}>
+          <Typography variant="h6" component="h4" sx={{ mb: 2 }}>
             🎯 Ta question vise…
           </Typography>
           
-          <Stack spacing={3} sx={{ color: "warning.contrastText" }}>
+          <Stack spacing={3}>
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
                 1. Décrire une fréquence/profil
@@ -426,9 +445,9 @@ export default function Step7TypeEtude() {
         <TableContainer component={Paper} sx={{ my: 3 }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'secondary.light' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: 'secondary.contrastText' }}>Élément PICOT</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'secondary.contrastText' }}>Impact design</TableCell>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Élément PICOT</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Impact design</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -436,7 +455,7 @@ export default function Step7TypeEtude() {
                 <TableCell><strong>P</strong> Population (statique vs dynamique)</TableCell>
                 <TableCell>Transversal (statique) / Cohorte (dynamique fermée)</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell><strong>I/C</strong> Intervention/Comparateur</TableCell>
                 <TableCell>Si intervention assignée → expérimental</TableCell>
               </TableRow>
@@ -444,7 +463,7 @@ export default function Step7TypeEtude() {
                 <TableCell><strong>O</strong> Outcome (prévalence vs incidence/survie)</TableCell>
                 <TableCell>Prévalence → transversal, Incidence/survie → cohorte</TableCell>
               </TableRow>
-              <TableRow sx={{ backgroundColor: 'grey.50' }}>
+              <TableRow>
                 <TableCell><strong>T</strong> Temps</TableCell>
                 <TableCell>Suivi = longitudinal ; instantané = transversal</TableCell>
               </TableRow>
@@ -463,45 +482,38 @@ export default function Step7TypeEtude() {
             {
               example: "Prévalence des escarres en service X en mars",
               design: "Descriptive transversale",
-              reason: "(population statique)",
-              color: "info"
+              reason: "(population statique)"
             },
             {
               example: "Exercices d'équilibre ↓ chutes sur 6 mois",
               design: "ECR (idéal)",
-              reason: "sinon quasi-expérimental",
-              color: "success"
+              reason: "sinon quasi-expérimental"
             },
             {
               example: "Tabac → cancer poumon (maladie rare)",
               design: "Cas-témoins",
-              reason: "",
-              color: "error"
+              reason: ""
             },
             {
               example: "Exposition pro au bruit → surdité (suivi annuel)",
               design: "Cohorte",
-              reason: "(prospective/rétrospective selon données)",
-              color: "warning"
+              reason: "(prospective/rétrospective selon données)"
             },
             {
               example: "Tendance mortalité cardio sur 20 ans",
               design: "Étude de tendance",
-              reason: "(longitudinale, séries temporelles)",
-              color: "secondary"
+              reason: "(longitudinale, séries temporelles)"
             }
           ].map((item, index) => (
             <Grid item xs={12} md={6} key={index}>
-              <Card elevation={2} sx={{ height: '100%' }}>
+              <Card elevation={1} sx={{ height: '100%' }}>
                 <CardContent>
                   <Typography variant="body1" sx={{ mb: 2, fontWeight: 'medium' }}>
                     {item.example}
                   </Typography>
-                  <Chip 
-                    label={item.design} 
-                    color={item.color} 
-                    sx={{ mb: 1 }}
-                  />
+                  <Typography variant="subtitle2" color="primary" sx={{ mb: 1 }}>
+                    → {item.design}
+                  </Typography>
                   {item.reason && (
                     <Typography variant="body2" color="text.secondary">
                       {item.reason}
@@ -602,7 +614,7 @@ export default function Step7TypeEtude() {
             </Box>
 
             <Collapse in={showExercise1Answers}>
-              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: checkExercise1Score() >= 3 ? 'success.light' : 'warning.light' }}>
+              <Paper elevation={1} sx={{ p: 2, mt: 3 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                   {checkExercise1Score() >= 3 ? `🎉 Excellent ! Score: ${checkExercise1Score()}/4` : `📝 Score: ${checkExercise1Score()}/4 - Réponses correctes :`}
                 </Typography>
@@ -661,14 +673,14 @@ export default function Step7TypeEtude() {
             </Box>
 
             <Collapse in={showExercise2Answers}>
-              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: 'info.light' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: 'info.contrastText' }}>
+              <Paper elevation={1} sx={{ p: 2, mt: 3 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                   💡 Réponse modèle :
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 2, color: 'info.contrastText' }}>
+                <Typography variant="body2" sx={{ mb: 2 }}>
                   <strong>Design proposé :</strong> ECR (Essai Contrôlé Randomisé)
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'info.contrastText' }}>
+                <Typography variant="body2">
                   <strong>Justification :</strong> 
                   <br />• <strong>Intervention testable :</strong> Programme d'exercices vs soins usuels
                   <br />• <strong>Randomisation éthique :</strong> Les deux groupes bénéficient de soins (pas de privation)
@@ -737,7 +749,7 @@ export default function Step7TypeEtude() {
             </Box>
 
             <Collapse in={showExercise3Answers}>
-              <Paper elevation={1} sx={{ p: 2, mt: 3, backgroundColor: checkExercise3Score() === 3 ? 'success.light' : 'warning.light' }}>
+              <Paper elevation={1} sx={{ p: 2, mt: 3 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
                   {checkExercise3Score() === 3 ? `🎉 Parfait ! Score: ${checkExercise3Score()}/3` : `📝 Score: ${checkExercise3Score()}/3 - Réponses correctes :`}
                 </Typography>
@@ -761,8 +773,8 @@ export default function Step7TypeEtude() {
 
         <Grid container spacing={3} sx={{ my: 2 }}>
           <Grid item xs={12} md={6}>
-            <Paper elevation={1} sx={{ p: 3, height: '100%', backgroundColor: "success.light" }}>
-              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold', color: "success.contrastText" }}>
+            <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
+              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold' }}>
                 Faire ✅
               </Typography>
               <List dense>
@@ -785,8 +797,8 @@ export default function Step7TypeEtude() {
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Paper elevation={1} sx={{ p: 3, height: '100%', backgroundColor: "error.light" }}>
-              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold', color: "error.contrastText" }}>
+            <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
+              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'semibold' }}>
                 Éviter ❌
               </Typography>
               <List dense>
@@ -824,7 +836,7 @@ export default function Step7TypeEtude() {
           </MuiLink>
         </Grid>
         <Grid item>
-          <MuiLink component={NavLink} to="/methodologique/population-echantillonnage" sx={{ display: 'flex', alignItems: 'center' }}>
+          <MuiLink component={NavLink} to="/methodologique/population-echantillon" sx={{ display: 'flex', alignItems: 'center' }}>
             SUIVANT : Étape 8 - Population et échantillonnage
             <ArrowForward sx={{ ml: 1 }} />
           </MuiLink>

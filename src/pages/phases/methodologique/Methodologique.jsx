@@ -13,8 +13,8 @@ export default function Methodologique() {
       <List>
         <ListItem>
           <ListItemText 
-            primary={<Link component={NavLink} to="/methodologique/type-etude">Type d'étude et devis de recherche</Link>}
-            secondary="Choisir le devis de recherche approprié : observationnel (cohorte, cas-témoins), expérimental (essai contrôlé randomisé), qualitatif ou mixte." 
+            primary={<Link component={NavLink} to="/methodologique/type-etude">Type d'étude et plan de recherche</Link>}
+            secondary="Choisir le plan de recherche approprié : observationnel (cohorte, cas-témoins), expérimental (essai contrôlé randomisé), qualitatif ou mixte." 
           />
         </ListItem>
         <ListItem>
