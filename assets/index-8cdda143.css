@@ -1,1 +1,0 @@
-.skip-link{position:absolute;left:-9999px;top:0;background:#111;color:#fff;padding:.5rem .75rem;z-index:1000}.skip-link:focus{left:.5rem;top:.5rem}:root{--focus: 3px solid #2b8a3e}html{font-size:16px}:where(a,button,[tabindex]:not([tabindex="-1"])):focus-visible{outline:var(--focus);outline-offset:2px}
