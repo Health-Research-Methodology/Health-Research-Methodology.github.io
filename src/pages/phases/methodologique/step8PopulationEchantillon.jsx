@@ -430,170 +430,348 @@ export default function Step8PopulationEchantillon() {
       {/* 4) Taille d'échantillon */}
       <section aria-labelledby="formules-heading">
         <Typography id="formules-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
-          📏 4) Calcul de la taille d’échantillon
+          📏 4) Calcul de la taille d'échantillon en recherche
         </Typography>
 
-        <Paper elevation={1} sx={{ p: 3, my: 2, backgroundColor: (t)=>t.palette.grey[50] }}>
-                    {/* Formule 1: Étude descriptive */}
-          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-            A. Étude descriptive (estimation d'une proportion)
+        <Alert severity="info" sx={{ mb: 3 }}>
+          <AlertTitle>🎯 Principe fondamental</AlertTitle>
+          <Typography>
+            En recherche, il est souvent impossible d'étudier tout le monde. On sélectionne donc un sous-groupe, appelé échantillon. 
+            La question cruciale est : <strong>"Combien de personnes dois-je inclure pour que mes résultats soient crédibles ?"</strong>
+          </Typography>
+        </Alert>
+
+        {/* Cas 1: Estimer une proportion */}
+        <Paper elevation={2} sx={{ p: 4, my: 3, backgroundColor: 'primary.50' }}>
+          <Typography variant="h6" component="h4" sx={{ mb: 3, fontWeight: 'bold', color: 'primary.main' }}>
+            📊 Cas 1 : Estimer une proportion (Étude de prévalence)
           </Typography>
           
+          <Typography variant="body1" paragraph>
+            <strong>Objectif :</strong> Mesurer un pourcentage dans une population (ex: prévalence du diabète, taux de vaccination, satisfaction des patients).
+          </Typography>
+
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Formule clé :</Typography>
           <FormulaBox 
-            formula="n = Z_{\\alpha/2}^2 \\times p(1-p) / d^2"
+            formula="n = \frac{Z^2 \cdot p(1-p)}{d^2}"
             color="primary.main"
             size="large"
           />
 
-          <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid container spacing={3} sx={{ mb: 3 }}>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Paramètres :</strong>
-                <br/>• Z<sub>α/2</sub> : quantile normal (1,96 pour 95%)
-                <br/>• p : proportion attendue (0,5 si inconnue)
-                <br/>• d : marge d'erreur acceptée (ex. 0,05)
-              </Typography>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Paramètres :</Typography>
+              <List dense>
+                <ListItem>
+                  <ListItemText 
+                    primary="n : Taille de l'échantillon recherchée"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="Z : Niveau de confiance"
+                    secondary="• 95% (standard) → Z = 1.96 • 99% (très sûr) → Z = 2.58"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="p : Proportion attendue"
+                    secondary="• Estimation du pourcentage cherché • Si inconnue, utiliser p = 0.50 (choix prudent)"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="d : Marge d'erreur (précision)"
+                    secondary="• ±5% → d = 0.05 • ±3% → d = 0.03"
+                  />
+                </ListItem>
+              </List>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Exemple :</strong>
-                <br/>Z=1,96, p=0,5, d=0,05
-                <br/>⟹ n = (1,96)² × 0,5 × 0,5 / (0,05)²
-                <br/>⟹ n ≈ 384 sujets
-              </Typography>
+              <Card elevation={1} sx={{ p: 2, backgroundColor: 'success.50' }}>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'success.main' }}>
+                  📝 Exemple : Prévalence de l'anémie
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Contexte :</strong> Estimer la prévalence de l'anémie chez les enfants &lt;5 ans. 
+                  Littérature suggère ~30%. Confiance 95%, marge ±5%.
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Paramètres :</strong>
+                  <br/>• Z = 1.96 (95% confiance)
+                  <br/>• p = 0.30 (prévalence attendue) 
+                  <br/>• d = 0.05 (marge d'erreur)
+                </Typography>
+                <SmallFormulaBox formula="n = \frac{1.96^2 \cdot 0.30 \cdot 0.70}{0.05^2}" />
+                <SmallFormulaBox formula="n = \frac{3.8416 \cdot 0.21}{0.0025} = 322.68" />
+                <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold', color: 'success.dark' }}>
+                  ✅ <strong>Conclusion :</strong> Inclure au minimum 323 enfants.
+                </Typography>
+              </Card>
             </Grid>
           </Grid>
 
-          <Typography variant="body2" sx={{ fontStyle: 'italic', mb: 1 }}>
-            <strong>Ajustements :</strong>
-          </Typography>
-          <Stack spacing={2} sx={{ mb: 3 }}>
-            <Box>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>1. Correction population finie :</strong>
-              </Typography>
-              <SmallFormulaBox formula="n_{corr} = \\frac{n}{1 + \\frac{n-1}{N}}" />
-            </Box>
+          {/* Exercice guidé 1 */}
+          <Card sx={{ p: 3, backgroundColor: 'warning.50' }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'warning.dark' }}>
+              ✏️ Exercice guidé 1 : Intention de vaccination VPH
+            </Typography>
+            <Typography variant="body2" paragraph>
+              <strong>Énoncé :</strong> Enquête sur le pourcentage de parents qui ont l'intention de vacciner leurs adolescents contre le VPH. 
+              Sujet nouveau dans votre région (aucune estimation). Confiance 95%, précision ±4%.
+            </Typography>
             
-            <Box>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>2. Majoration pour non-réponse :</strong>
-              </Typography>
-              <SmallFormulaBox formula="n_{final} = \\frac{n_{corr}}{1 - taux\_non\_réponse}" />
-            </Box>
-          </Stack>
+            <Collapse in={showExercise1Answers}>
+              <Box sx={{ mt: 2, p: 2, backgroundColor: 'white', borderRadius: 1 }}>
+                <Typography variant="body2" paragraph>
+                  <strong>Solution :</strong>
+                </Typography>
+                <Typography variant="body2">
+                  • Z = 1.96, p = 0.50 (car inconnu), d = 0.04
+                </Typography>
+                <SmallFormulaBox formula="n = \frac{1.96^2 \cdot 0.50 \cdot 0.50}{0.04^2} = \frac{3.8416 \cdot 0.25}{0.0016} = 600.25" />
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'success.dark' }}>
+                  ✅ <strong>Réponse :</strong> Il faudra interroger 601 parents.
+                </Typography>
+              </Box>
+            </Collapse>
+            
+            <Button 
+              variant="outlined" 
+              onClick={() => setShowExercise1Answers(!showExercise1Answers)}
+              sx={{ mt: 2 }}
+            >
+              {showExercise1Answers ? 'Masquer la solution' : 'Voir la solution'}
+            </Button>
+          </Card>
+        </Paper>
 
-          <Divider sx={{ my: 3 }}/>
-
-          {/* Formule 2: Deux proportions */}
-          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-            B. Comparaison de deux proportions (ECR, cohorte, cas-témoins)
+        {/* Cas 2: Comparer deux proportions */}
+        <Paper elevation={2} sx={{ p: 4, my: 3, backgroundColor: 'secondary.50' }}>
+          <Typography variant="h6" component="h4" sx={{ mb: 3, fontWeight: 'bold', color: 'secondary.main' }}>
+            ⚖️ Cas 2 : Comparer deux proportions (Essai clinique)
           </Typography>
           
+          <Typography variant="body1" paragraph>
+            <strong>Objectif :</strong> Comparer l'efficacité entre deux groupes (traitement vs placebo, méthode A vs méthode B).
+          </Typography>
+
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Formule clé :</Typography>
           <FormulaBox 
-            formula="n_{par \\, groupe} = \\frac{\\left[Z_{\\alpha/2}\\sqrt{2\\bar{p}(1-\\bar{p})} + Z_{\\beta}\\sqrt{p_1(1-p_1) + p_2(1-p_2)}\\right]^2}{(p_1-p_2)^2}"
+            formula="n_{\text{groupe}} = \frac{(Z_{\alpha/2} + Z_{\beta})^2 \cdot [p_1(1-p_1) + p_2(1-p_2)]}{(p_1 - p_2)^2}"
             color="secondary.main"
             size="medium"
           />
 
-          <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid container spacing={3} sx={{ mb: 3 }}>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Paramètres :</strong>
-                <br/>• Z<sub>α/2</sub> : risque α (1,96 pour 5%)
-                <br/>• Z<sub>β</sub> : puissance (0,84 pour 80%)
-                <br/>• p₁, p₂ : proportions dans chaque groupe
-                <br/>• p̄ = (p₁+p₂)/2 : proportion poolée
-              </Typography>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Paramètres :</Typography>
+              <List dense>
+                <ListItem>
+                  <ListItemText 
+                    primary="n_groupe : Taille pour chaque groupe"
+                    secondary="L'étude totale sera de 2 × n"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="Z_α/2 : Seuil de significativité"
+                    secondary="• α = 5% (standard) → Z_α/2 = 1.96"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="Z_β : Puissance statistique"
+                    secondary="• 80% (standard) → Z_β = 0.84 • 90% → Z_β = 1.28"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="p₁, p₂ : Proportions attendues"
+                    secondary="Dans chaque groupe"
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText 
+                    primary="(p₁ - p₂) : Différence minimale"
+                    secondary="À détecter (cliniquement importante)"
+                  />
+                </ListItem>
+              </List>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Exemple :</strong>
-                <br/>p₁=30% (contrôle), p₂=21% (intervention)
-                <br/>α=5%, puissance=80%
-                <br/>⟹ ≈ 367 sujets par groupe
-                <br/>+10% pertes ⟹ ≈ 408/groupe
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Divider sx={{ my: 3 }}/>
-
-          {/* Formule 3: Deux moyennes */}
-          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-            C. Comparaison de deux moyennes (variables continues)
-          </Typography>
-          
-          <FormulaBox 
-            formula="n_{par \\, groupe} = \\frac{2(Z_{\\alpha/2} + Z_{\\beta})^2 \\times \\sigma^2}{\\Delta^2}"
-            color="success.main"
-            size="large"
-          />
-
-          <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Paramètres :</strong>
-                <br/>• σ : écart-type (littérature/pilote)
-                <br/>• Δ : différence cliniquement significative
-                <br/>• Z<sub>α/2</sub>, Z<sub>β</sub> : comme précédemment
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Exemple :</strong>
-                <br/>Score d'équilibre : σ=15
-                <br/>Δ=8 points (cliniquement pertinent)
-                <br/>α=5%, puissance=80%
-                <br/>⟹ ≈ 56 sujets par groupe
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Divider sx={{ my: 3 }}/>
-
-          {/* Formule 4: Sondage en grappes */}
-          <Typography variant="h6" component="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-            D. Sondage en grappes (clusters)
-          </Typography>
-          
-          <FormulaBox 
-            formula="DEFF = 1 + (m-1) \\times ICC"
-            color="warning.main"
-            size="large"
-          />
-
-          <SmallFormulaBox formula="n_{ajusté} = n_{théorique} \\times DEFF" />
-
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Paramètres :</strong>
-                <br/>• m : taille moyenne des grappes
-                <br/>• ICC : corrélation intra-grappe (0,01–0,05)
-                <br/>• DEFF : design effect (effet de plan)
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body2">
-                <strong>Exemple :</strong>
-                <br/>n théorique = 384
-                <br/>m=20 patients/service, ICC=0,02
-                <br/>DEFF = 1+(19×0,02) = 1,38
-                <br/>⟹ n = 384×1,38 ≈ 530 sujets
-              </Typography>
+              <Card elevation={1} sx={{ p: 2, backgroundColor: 'success.50' }}>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'success.main' }}>
+                  📝 Exemple : Nouveau médicament anti-migraine
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Contexte :</strong> 30% des patients sous placebo ont une crise/mois. 
+                  On espère réduire à 20% avec le nouveau médicament.
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  <strong>Paramètres :</strong>
+                  <br/>• Z_α/2 = 1.96 (significativité 5%)
+                  <br/>• Z_β = 0.84 (puissance 80%)
+                  <br/>• p₁ = 0.20 (groupe médicament)
+                  <br/>• p₂ = 0.30 (groupe placebo)
+                </Typography>
+                <SmallFormulaBox formula="n_{\text{groupe}} = \frac{(1.96 + 0.84)^2 \cdot [0.20(0.80) + 0.30(0.70)]}{(0.20 - 0.30)^2}" />
+                <SmallFormulaBox formula="n_{\text{groupe}} = \frac{(2.8)^2 \cdot [0.16 + 0.21]}{0.01} = \frac{7.84 \cdot 0.37}{0.01} = 289.08" />
+                <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold', color: 'success.dark' }}>
+                  ✅ <strong>Conclusion :</strong> 290 patients par groupe (580 total).
+                </Typography>
+              </Card>
             </Grid>
           </Grid>
 
-          <Alert severity="info" sx={{ mt: 2 }}>
-            <Typography variant="body2">
-              <strong>Note :</strong> Plus l'ICC est élevé ou les grappes sont grandes, plus il faut augmenter la taille d'échantillon par rapport à un sondage aléatoire simple.
+          {/* Exercice guidé 2 */}
+          <Card sx={{ p: 3, backgroundColor: 'warning.50' }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'warning.dark' }}>
+              ✏️ Exercice guidé 2 : Efficacité de deux thérapies anti-tabac
             </Typography>
-          </Alert>
+            <Typography variant="body2" paragraph>
+              <strong>Énoncé :</strong> Comparer deux thérapies d'arrêt du tabac. Thérapie A (standard) : 25% de réussite. 
+              Nouvelle thérapie B devrait atteindre 40%. Puissance 90%, significativité 5%.
+            </Typography>
+            
+            <Collapse in={showExercise2Answers}>
+              <Box sx={{ mt: 2, p: 2, backgroundColor: 'white', borderRadius: 1 }}>
+                <Typography variant="body2" paragraph>
+                  <strong>Solution :</strong>
+                </Typography>
+                <Typography variant="body2">
+                  • Z_α/2 = 1.96, Z_β = 1.28 (90% puissance), p₁ = 0.40, p₂ = 0.25
+                </Typography>
+                <SmallFormulaBox formula="n_{\text{groupe}} = \frac{(1.96 + 1.28)^2 \cdot [0.40(0.60) + 0.25(0.75)]}{(0.40 - 0.25)^2}" />
+                <SmallFormulaBox formula="n_{\text{groupe}} = \frac{10.4976 \cdot 0.4275}{0.0225} = 199.45" />
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'success.dark' }}>
+                  ✅ <strong>Réponse :</strong> 200 participants par groupe (400 total).
+                </Typography>
+              </Box>
+            </Collapse>
+            
+            <Button 
+              variant="outlined" 
+              onClick={() => setShowExercise2Answers(!showExercise2Answers)}
+              sx={{ mt: 2 }}
+            >
+              {showExercise2Answers ? 'Masquer la solution' : 'Voir la solution'}
+            </Button>
+          </Card>
         </Paper>
-      </section>
 
-      {/* 5) Exemples rapides */}
+        {/* Ajustements importants */}
+        <Paper elevation={2} sx={{ p: 4, my: 3, backgroundColor: 'warning.50' }}>
+          <Typography variant="h6" component="h4" sx={{ mb: 3, fontWeight: 'bold', color: 'warning.dark' }}>
+            ⚙️ Ajustements importants (pour des calculs plus précis)
+          </Typography>
+
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Card elevation={1} sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'info.main' }}>
+                  A. Correction pour Population Finie
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  Si votre population totale est petite (ex: 400 infirmiers d'un hôpital) et que votre échantillon calculé 
+                  représente plus de 5% de cette population, vous pouvez le réduire.
+                </Typography>
+                
+                <SmallFormulaBox formula="n_{\text{ajusté}} = \frac{n_{\text{calculé}}}{1 + \frac{n_{\text{calculé}}}{N}}" />
+                
+                <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
+                  <strong>Exemple :</strong> Calcul de base n = 385, population totale N = 800 employés.
+                </Typography>
+                <SmallFormulaBox formula="n_{\text{ajusté}} = \frac{385}{1 + \frac{385}{800}} = \frac{385}{1.48125} \approx 260" />
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                  → Vous n'avez besoin que de 260 employés.
+                </Typography>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Card elevation={1} sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: 'error.main' }}>
+                  B. Majoration pour Non-Réponses
+                </Typography>
+                <Typography variant="body2" paragraph>
+                  Anticipez que certaines personnes refuseront de participer ou abandonneront l'étude.
+                </Typography>
+                
+                <SmallFormulaBox formula="n_{\text{final}} = \frac{n_{\text{calculé}}}{1 - \text{Taux}_{\text{non-réponse}}}" />
+                
+                <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
+                  <strong>Exemple :</strong> Besoin de 323 enfants, taux de refus/perte attendu de 15%.
+                </Typography>
+                <SmallFormulaBox formula="n_{\text{final}} = \frac{323}{1 - 0.15} = \frac{323}{0.85} \approx 380" />
+                <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                  → Contacter 380 enfants pour en avoir au moins 323.
+                </Typography>
+              </Card>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {/* Exercice de synthèse */}
+        <Card sx={{ p: 4, my: 3, backgroundColor: 'success.50' }}>
+          <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', color: 'success.dark' }}>
+            🎯 Exercice de synthèse : Enquête de satisfaction
+          </Typography>
+          
+          <Typography variant="body1" paragraph>
+            <strong>Contexte :</strong> Enquête de satisfaction dans une clinique de 1200 patients actifs. 
+            Estimer le pourcentage de patients "très satisfaits". Confiance 95%, marge ±5%, 20% de non-réponse attendue.
+          </Typography>
+          
+          <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 2 }}>
+            Quel est le nombre final de patients à contacter ?
+          </Typography>
+
+          <Collapse in={showExercise3Answers}>
+            <Box sx={{ mt: 2, p: 3, backgroundColor: 'white', borderRadius: 1 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>Solution détaillée :</Typography>
+              
+              <Stack spacing={2}>
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    1. Calcul de base (pas d'estimation → p=0.5) :
+                  </Typography>
+                  <SmallFormulaBox formula="n = \frac{1.96^2 \cdot 0.5(1-0.5)}{0.05^2} = 384.16 \rightarrow 385" />
+                </Box>
+
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    2. Correction population finie (N=1200) :
+                  </Typography>
+                  <SmallFormulaBox formula="n_{\text{ajusté}} = \frac{385}{1 + \frac{385}{1200}} = \frac{385}{1.3208} \approx 292" />
+                </Box>
+
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    3. Ajustement non-réponse (20%) :
+                  </Typography>
+                  <SmallFormulaBox formula="n_{\text{final}} = \frac{292}{1-0.20} = \frac{292}{0.80} = 365" />
+                </Box>
+
+                <Alert severity="success">
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    ✅ <strong>Réponse finale :</strong> Contacter 365 patients pour réaliser l'étude.
+                  </Typography>
+                </Alert>
+              </Stack>
+            </Box>
+          </Collapse>
+          
+          <Button 
+            variant="contained" 
+            onClick={() => setShowExercise3Answers(!showExercise3Answers)}
+            sx={{ mt: 2 }}
+            color="success"
+          >
+            {showExercise3Answers ? 'Masquer la solution complète' : 'Voir la solution complète'}
+          </Button>
+        </Card>
+      </section>      {/* 5) Exemples rapides */}
       <section aria-labelledby="exemples-heading">
         <Typography id="exemples-heading" variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
           🧪 5) Exemples-guides (rapides)
@@ -880,7 +1058,7 @@ export default function Step8PopulationEchantillon() {
                   <Box>
                     <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>1. Prévalence :</Typography>
                     <Box sx={{ textAlign: 'center', py: 1, backgroundColor: 'white', borderRadius: 1, border: '1px solid', borderColor: 'primary.main' }}>
-                      <BlockMath math="n = Z_{\\alpha/2}^2 \\times p(1-p) / d^2" />
+                      <BlockMath math="n = Z_{\alpha/2}^2 \cdot p(1-p) / d^2" />
                     </Box>
                   </Box>
 
@@ -1080,7 +1258,7 @@ export default function Step8PopulationEchantillon() {
                   <Typography variant="body2"><strong>Taille finale (ajustée) :</strong> {deffResult.nFinal}</Typography>
                   <Divider sx={{ my: 1 }}/>
                   <Typography variant="body2">
-                    <em>Rappel :</em> <InlineMath math="DEFF = 1 + (m-1) \times ICC" /> ; <InlineMath math="n_{design} = n_0 \times DEFF" /> ; <InlineMath math="n_{final} = n_{design} / (réponse/100)" />.
+                    <em>Rappel :</em> <InlineMath math="DEFF = 1 + (m-1) \cdot ICC" /> ; <InlineMath math="n_{\text{design}} = n_0 \cdot DEFF" /> ; <InlineMath math="n_{\text{final}} = n_{\text{design}} / (\text{réponse}/100)" />.
                   </Typography>
                 </Paper>
               </Grid>
